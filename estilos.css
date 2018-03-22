@@ -7,13 +7,30 @@
 
 */
 
-
-
 .textoCentral {
 
 	font-size: 50px;
 	font-weight: bold;
 	padding: 10px;
 	text-align: center;
+	
+}
 
+#menuHeader ul {
+    background-color: transparent;
+    color: black;
+    padding: 20px;
+    list-style:none;
+    text-align: left;
+}
+
+#menuHeader li {
+    
+    display: inline;
+    padding-left: 50px;
+    
+}
+
+a {
+    text-decoration: none;
 }
