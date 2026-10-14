@@ -1,7 +1,7 @@
 ---
-title: "Buscar"
+title: "Search"
 layout: "search"
 url: "/search/"
 summary: "search"
-placeholder: "Buscar artigos..."
+placeholder: "Search articles..."
 ---
