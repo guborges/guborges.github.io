@@ -20,7 +20,7 @@ Aqui está o output real do `SHOW CONFIGURATION VERBOSE` nas duas versões:
 
 ### Oracle 19c
 
-```
+```text
 Configuration - DG_AUTO
   Protection Mode: MaxPerformance
   Members:
@@ -49,7 +49,7 @@ Configuration Status: SUCCESS
 
 ### Oracle 26ai
 
-```
+```text
 Configuration - DG_CARECA
   Protection Mode: MaxPerformance
   Members:
@@ -97,7 +97,7 @@ Fonte: Oracle Database 26ai Data Guard Broker Properties
 
 ### Sintaxe
 
-```
+```text
 DGMGRL> EDIT CONFIGURATION SET PROPERTY PrimaryDatabaseCandidates = 'DB1,DB2,DB3';
 ```
 
@@ -105,7 +105,7 @@ DGMGRL> EDIT CONFIGURATION SET PROPERTY PrimaryDatabaseCandidates = 'DB1,DB2,DB3
 
 Cenário: 6 databases na configuração (db1, db2, db3, b4, b5, b6)
 
-```
+```text
 DGMGRL> EDIT CONFIGURATION SET PROPERTY PrimaryDatabaseCandidates = 'db1,db2,db3';
 Property "primarydatabasecandidates" updated
 ```
@@ -120,7 +120,7 @@ Resultado:
 
 Quando você tenta fazer switchover ou failover para um database que não está na lista de candidatos:
 
-```
+```text
 ORA-16529: Switchover and failover operations are restricted to databases 
            specified in the PrimaryDatabaseCandidates configuration property
 ```
@@ -146,7 +146,7 @@ Ou seja, quando FSFO está habilitado, a propriedade `FastStartFailoverTarget` �
 
 A documentação menciona:
 
-```
+```text
 DGMGRL> EDIT CONFIGURATION SET PROPERTY PrimaryDatabaseCandidates = 'DB2';
 Warning: ORA-16580: The primary database was added to property PrimaryDatabaseCandidates
 Property "primarydatabasecandidates" updated
@@ -166,7 +166,7 @@ Fonte: Oracle Database 26ai Data Guard Broker Properties
 
 ### Sintaxe
 
-```
+```text
 DGMGRL> EDIT CONFIGURATION SET PROPERTY DrainTimeout = 120;
 ```
 
@@ -200,7 +200,7 @@ Fonte: Oracle Database 26ai Data Guard Broker Properties
 
 ### Sintaxe
 
-```
+```text
 DGMGRL> EDIT CONFIGURATION SET PROPERTY FastStartFailoverLagGraceTime = 300;
 ```
 
@@ -253,13 +253,13 @@ Valor padrão: 0 (automático)
 
 Para confirmar se seu Oracle Database tem essas propriedades:
 
-```
+```text
 DGMGRL> SHOW CONFIGURATION VERBOSE;
 ```
 
 Ou consulte a view:
 
-```
+```text
 SELECT DISTINCT property 
      FROM v$dg_broker_property 
      WHERE property IN ('PrimaryDatabaseCandidates', 

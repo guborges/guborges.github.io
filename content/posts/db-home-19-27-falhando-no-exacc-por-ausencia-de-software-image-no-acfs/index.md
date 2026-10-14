@@ -13,15 +13,15 @@ O ambiente possuía dois clusters RAC independentes, aqui chamados de RAC-A e RA
 
 Ao tentar criar o DB Home no RAC-A, as mensagens retornadas eram as seguintes:
 
-```
+```text
 ECRA error: {} when checking status of the software image download. Retry the operation.
 ```
-```
+```text
 The database host services on node-a01 are unavailable or not in the active state.
 Please refer to the following MOS note and restart services:
 How to Manage and Check Health of Exadata Cloud Related Services - ExaDB-D, ExaDB-XS & ExaCC (Doc ID 2926648.1)
 ```
-```
+```text
 Create DB Home operation failed.
 Refer to work request ID xxxxxxxx when opening a Service Request at My Oracle Support.
 ```
@@ -32,7 +32,7 @@ As mensagens retornadas pelo processo eram genéricas no sentido de não refleti
 
 A primeira etapa da investigação foi a busca por logs. Foram verificados os caminhos padrão utilizados pelo ExaCC para operações de DB Home, principalmente:
 
-```
+```text
 /var/opt/oracle/log/
 ```
 
@@ -40,7 +40,7 @@ Nenhum log relacionado à criação do DB Home foi encontrado. Não havia diret�
 
 Em seguida, foi tentada a recuperação da comunicação com os serviços do Exadata por meio da reinicialização dos agentes responsáveis pela orquestração das operações de banco. Os seguintes comandos foram executados no nó do RAC-A:
 
-```
+```text
 systemctl status dbcsagent
 systemctl stop dbcsagent
 systemctl start dbcsagent
@@ -58,13 +58,13 @@ Nesse ponto, ficou claro que o problema não estava relacionado à versão do ba
 
 No RAC-B, que funcionou corretamente, foi identificado que a software image do DB Home havia sido criada e armazenada no ACFS, no diretório padrão:
 
-```
+```text
 /acfs01/dbaas_acfs/images
 ```
 
 Dentro desse diretório, existia o path correspondente à image criada automaticamente pelo processo:
 
-```
+```text
 /acfs01/dbaas_acfs/images/ocid1.databasesoftwareimage.oc1.sa-region-1.xxxxxxxxxxxxxxxxxxxxx
 ```
 
@@ -72,14 +72,14 @@ Ao validar o mesmo caminho no RAC-A, foi constatado que essa software image simp
 
 Com essa evidência, foi adotada uma abordagem manual. A software image existente no RAC-B foi copiada diretamente para o mesmo caminho no RAC-A, respeitando exatamente a estrutura esperada pelo DBaaS. O comando executado foi:
 
-```
+```text
 scp -r /acfs01/dbaas_acfs/images/ocid1.databasesoftwareimage.oc1.sa-region-1.xxxxxxxxxxxxxxxxxxxxx \
 oracle@node-a01:/acfs01/dbaas_acfs/images/
 ```
 
 Após a cópia da image para o RAC-A, foi executado o precheck completo da criação do DB Home utilizando o dbaascli, forçando explicitamente o uso da software image por meio do parâmetro imageFilePath. O comando utilizado foi:
 
-```
+```text
 dbaascli dbHome create \
   --version 19.27.0.0.0 \
   --oracleHomeName dbhome_v10_DB_IMAGE_1927_20251211 \
@@ -93,7 +93,7 @@ A execução foi realizada com o DBAAS CLI versão 25.1.2.0.0. O precheck valido
 
 Com o precheck aprovado, foi executada a criação efetiva do DB Home no RAC-A utilizando o mesmo imageFilePath. O comando foi:
 
-```
+```text
 dbaascli dbHome create \
   --version 19.27.0.0.0 \
   --oracleHomeName dbhome_v10_DB_IMAGE_1927_20251211 \
@@ -106,7 +106,7 @@ Durante a execução, o dbaascli percorreu todas as etapas esperadas do processo
 
 Ao final da execução, o novo Oracle Home foi criado corretamente no caminho:
 
-```
+```text
 /u02/app/oracle/product/19.0.0.0/dbhome_11
 ```
 

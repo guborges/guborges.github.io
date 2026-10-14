@@ -83,13 +83,13 @@ select dbms_stats.get_prefs('METHOD_OPT') from dual;
 
 Para alterar para REPEAT:
 
-```
+```text
 exec dbms_stats.set_global_prefs('METHOD_OPT', 'FOR ALL COLUMNS SIZE REPEAT');
 ```
 
 Para desativar:
 
-```
+```text
 exec dbms_stats.set_global_prefs('METHOD_OPT', 'FOR ALL COLUMNS SIZE 1');
 ```
 
@@ -99,13 +99,13 @@ O Oracle cria automaticamente quando você usa DBMS_STATS, desde que haja uso re
 
 Para remover um histogram específico:
 
-```
+```text
 dbms_stats.delete_column_stats('SCOTT', 'EMP', 'EMP_ID', col_stat_type=>'HISTOGRAM');
 ```
 
 Para evitar que o Oracle recrie esse histogram:
 
-```
+```text
 BEGIN<br>dbms_stats.set_table_prefs('SCOTT', 'EMP', 'METHOD_OPT'=>'FOR ALL COLUMNS SIZE AUTO, FOR COLUMNS SIZE 1 EMP_ID');<br>END;<br>/
 ```
 

@@ -29,13 +29,13 @@ Esses arquivos são responsáveis por definir toda a infraestrutura que o Terraf
 
 ## 1) Estrutura do projeto
 
-```
+```text
 mkdir terraform-aws-mysql-rds && cd terraform-aws-mysql-rds
 ```
 
 Arquivos:
 
-```
+```text
 versions.tf
 providers.tf
 variables.tf
@@ -51,7 +51,7 @@ terraform.tfvars
 Define as versões mínimas do Terraform e do provider AWS que serão utilizadas no projeto.  
 Serve para garantir compatibilidade e evitar que versões diferentes causem erros durante o deploy.
 
-```
+```text
 terraform {
   required_version = ">= 1.5.0"
   required_providers {
@@ -68,7 +68,7 @@ terraform {
 Indica qual provedor de nuvem será usado neste caso, a **AWS**, e em qual região os recursos serão criados.  
 É aqui que o Terraform entende onde deve atuar.
 
-```
+```text
 provider "aws" {
   region = var.aws_region
 }
@@ -79,7 +79,7 @@ provider "aws" {
 Lista todas as variáveis usadas no projeto (como senha, nome do usuário e IP autorizado).  
 Essas variáveis permitem que o código seja reutilizado e configurado sem precisar alterar os arquivos principais.
 
-```
+```text
 variable "aws_region" {
   type        = string
   description = "AWS region"
@@ -115,7 +115,7 @@ variable "db_name" {
 É o coração do projeto. Aqui ficam as definições dos recursos que o Terraform vai criar o **Security Group**, o **Subnet Group** e a **instância RDS MySQL**.  
 Tudo que for realmente provisionado na AWS está declarado nesse arquivo.
 
-```
+```text
 # VPC/Subnets padrão (apenas para demo)
 data "aws_vpc" "default" {
   default = true
@@ -193,7 +193,7 @@ output "mysql_port" {
 Define o que o Terraform deve exibir ao final da execução (por exemplo, o endpoint e a porta do banco).  
 Essas saídas ajudam a visualizar rapidamente as informações mais importantes depois do deploy.
 
-```
+```text
 output "connect_example" {
   value = "mysql -h ${aws_db_instance.mysql.address} -P ${aws_db_instance.mysql.port} -u ${var.db_username} -p ${var.db_name}"
 }
@@ -204,7 +204,7 @@ output "connect_example" {
 Armazena os valores reais das variáveis definidas no variables.tf, como a senha do banco e o IP autorizado.  
 É um arquivo local e **não deve ser enviado para o GitHub**, pois contém dados sensíveis.
 
-```
+```text
 db_password = "StrongPassw0rd!"
 my_ip_cidr  = "SEU.IP.PUBLICO/32"
 ```
@@ -215,7 +215,7 @@ my_ip_cidr  = "SEU.IP.PUBLICO/32"
 
 Dentro do projeto do terraform:
 
-```
+```text
 terraform init
 terraform apply -auto-approve
 ```
@@ -224,14 +224,14 @@ No final, veja o **endpoint** e o exemplo de conexão nos outputs.
 
 ## 4) Conectar no MySQL
 
-```
+```text
 mysql -h <endpoint> -P 3306 -u admin -p appdb
 # digite a senha quando solicitado
 ```![](image.png)
 
 ## 5) Encerrar (evitar custos)
 
-```
+```text
 terraform destroy -auto-approve
 ```
 

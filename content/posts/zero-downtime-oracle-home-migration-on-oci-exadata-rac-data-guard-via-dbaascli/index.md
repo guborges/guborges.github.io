@@ -44,7 +44,7 @@ Oracle Home novo (exemplo):
 
 Nesta etapa iremos **confirmar em qual Oracle Home o banco está rodando agora**, e validar informações básicas antes de qualquer mudança.
 
-```
+```text
 dbaascli database getDetails --dbname instanciagustavo
 ```
 
@@ -59,7 +59,7 @@ O que você procura aqui:
 
 Nesta etapa iremos **executar somente validações** para garantir que o node consegue mover o banco para o novo Oracle Home.
 
-```
+```text
 dbaascli database move --dbname instanciagustavo \
   --oracleHome /u02/app/oracle/product/19.0.0.0/dbhome_4 \
   --skipDatapatch \
@@ -100,7 +100,7 @@ Depois:
 Nesta etapa iremos **realizar o move do banco para o novo Oracle Home**, que já contém a versão/RU desejada (ex: 19.27).  
 Aqui é onde o banco passa a **subir usando o novo home**.
 
-```
+```text
 dbaascli database move --dbname instanciagustavo \
   --oracleHome /u02/app/oracle/product/19.0.0.0/dbhome_4 \
   --skipDatapatch \
@@ -154,7 +154,7 @@ Checklist:
 
 Nesta etapa iremos **confirmar o Oracle Home atual do Primary** antes do move.
 
-```
+```text
 dbaascli database getDetails --dbname instanciagustavo
 ```
 
@@ -162,7 +162,7 @@ dbaascli database getDetails --dbname instanciagustavo
 
 Nesta etapa iremos **validar node a node** antes de mover.
 
-```
+```text
 dbaascli database move --dbname instanciagustavo \
   --oracleHome /u02/app/oracle/product/19.0.0.0/dbhome_4 \
   --skipDatapatch \
@@ -176,7 +176,7 @@ Repetir para `node2,node3,node4`.
 
 Nesta etapa iremos **mover o banco para o novo home** (RU 19.27) no Primary.
 
-```
+```text
 dbaascli database move --dbname instanciagustavo \
   --oracleHome /u02/app/oracle/product/19.0.0.0/dbhome_4 \
   --skipDatapatch \
@@ -195,7 +195,7 @@ Resultado esperado:
 Nesta etapa iremos **atualizar o dicionário do banco** para refletir os SQL patches da RU 19.27 do novo Oracle Home.  
 Essa etapa é o que fecha o ciclo da atualização.
 
-```
+```text
 dbaascli database runDatapatch --dbname instanciagustavo --waitForCompletion false
 ```
 

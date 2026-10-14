@@ -152,11 +152,11 @@ O risco operacional aqui não é “achar bonito”. É **partição de rede**�
 
 ### Diagramas de topologia
 
-```
+```text
 Site C - Remote DRSite B - MetroSite A - PrimarySYNC (AFFIRM ou NOAFFIRM)ASYNCPrimary DBStandby LocalStandby RemotoShow code
 ```
 
-```
+```text
 Remote - DRMetro - Far SyncSite A - PrimarySYNC (curto)ASYNC (longo)Primary DBFar Sync InstanceTerminal StandbyShow code
 ```
 
@@ -168,7 +168,7 @@ A base de Data Guard passa por `LOG_ARCHIVE_DEST_n` com atributos corretos. Or
 
 Exemplo de **Maximum Availability com SYNC/AFFIRM** (ilustrativo):
 
-```
+```text
 sqlCopyALTER SYSTEM SET LOG_ARCHIVE_CONFIG='DG_CONFIG=(PRIM,STBY)' SCOPE=BOTH;
 
 ALTER SYSTEM SET LOG_ARCHIVE_DEST_1=
@@ -195,7 +195,7 @@ Notas importantes suportadas pela documentação:
 
 Exemplo de **Maximum Availability com FastSync (SYNC/NOAFFIRM)**:
 
-```
+```text
 sqlCopyALTER SYSTEM SET LOG_ARCHIVE_DEST_2=
 'SERVICE=STBY
  SYNC NOAFFIRM
@@ -209,7 +209,7 @@ Por que isso reduz impacto? Porque o ACK vem sem esperar escrita no SRL; Oracle 
 
 Exemplo de **Maximum Performance com ASYNC/NOAFFIRM**:
 
-```
+```text
 sqlCopyALTER SYSTEM SET LOG_ARCHIVE_DEST_2=
 'SERVICE=STBY
  ASYNC NOAFFIRM
@@ -226,7 +226,7 @@ A documentação de redo transport reforça que o `SERVICE` usa um Oracle Net 
 
 Exemplo simples de `tnsnames.ora` (modelo):
 
-```
+```text
 iniCopySTBY =
   (DESCRIPTION =
     (ADDRESS = (PROTOCOL = TCP)(HOST = stby-host)(PORT = 1521))
@@ -245,12 +245,12 @@ O ponto-chave para este artigo: com broker você configura redo transport mode d
 
 Exemplo mínimo (snippets):
 
-```
+```text
 sqlCopy-- no SQL*Plus
 ALTER SYSTEM SET DG_BROKER_START=TRUE SCOPE=BOTH;
 ```
 
-```
+```text
 textCopy-- no DGMGRL
 DGMGRL> CREATE CONFIGURATION dgconf AS PRIMARY DATABASE IS PRIM CONNECT IDENTIFIER IS PRIM;
 DGMGRL> ADD DATABASE STBY AS CONNECT IDENTIFIER IS STBY MAINTAINED AS PHYSICAL;
@@ -281,14 +281,14 @@ A própria documentação de troubleshooting conecta log file sync diretamente a
 
 Exemplos práticos:
 
-```
+```text
 sqlCopy-- visão rápida de waits (desde startup)
 SELECT event, total_waits, time_waited/100 time_waited_s, average_wait/1000 avg_ms
 FROM v$system_event
 WHERE event IN ('log file sync','log file parallel write');
 ```
 
-```
+```text
 sqlCopy-- perfil de distribuição do log file sync
 SELECT wait_time_milli, wait_count
 FROM v$event_histogram
@@ -298,7 +298,7 @@ ORDER BY wait_time_milli;
 
 Para AWR (modelo):
 
-```
+```text
 sqlCopy-- AWR: média de log file sync por snapshot (exemplo)
 SELECT
   s.begin_interval_time,
@@ -315,7 +315,7 @@ ORDER BY s.begin_interval_time;
 
 O caminho mais direto é `V$DATAGUARD_STATS`. A doc descreve apply lag/transport lag, e que os cálculos dependem de dados recebidos periodicamente do source (se não muda, suspeite de falta de recebimento).
 
-```
+```text
 sqlCopySELECT name, value, time_computed, datum_time
 FROM v$dataguard_stats
 WHERE name LIKE '%lag%';
@@ -325,14 +325,14 @@ WHERE name LIKE '%lag%';
 
 Use `V$REDO_DEST_RESP_HISTOGRAM`. A doc explica colunas, que serve para identificar performance issues em SYNC e para tuning de `NET_TIMEOUT`, e até fornece queries (min/max).
 
-```
+```text
 sqlCopySELECT frequency, duration
 FROM v$redo_dest_resp_histogram
 WHERE dest_id = 2 AND frequency > 1
 ORDER BY duration;
 ```
 
-```
+```text
 sqlCopySELECT max(duration) AS max_s, min(duration) AS min_s
 FROM v$redo_dest_resp_histogram
 WHERE dest_id = 2 AND frequency > 1;
@@ -343,13 +343,13 @@ WHERE dest_id = 2 AND frequency > 1;
 - `V$ARCHIVE_DEST` e `V$ARCHIVE_DEST_STATUS` mostram destino, modo e status em runtime.
 - `V$DATAGUARD_STATUS` expõe mensagens recentes sobre redo transport/log apply (espelho do alert/trace).
 
-```
+```text
 sqlCopySELECT dest_id, status, destination, error
 FROM v$archive_dest_status
 WHERE status <> 'INACTIVE';
 ```
 
-```
+```text
 sqlCopySELECT facility, severity, message_num, timestamp, message
 FROM v$dataguard_status
 ORDER BY timestamp DESC
@@ -360,7 +360,7 @@ FETCH FIRST 30 ROWS ONLY;
 
 Um comando que vira rotina:
 
-```
+```text
 textCopyDGMGRL> SHOW CONFIGURATION;
 DGMGRL> SHOW CONFIGURATION LAG;
 DGMGRL> SHOW DATABASE STBY;
@@ -372,7 +372,7 @@ E para FSFO, a doc manda você validar com `SHOW FAST_START FAILOVER`.
 
 Exemplo de uso (modelo):
 
-```
+```text
 textCopyadrci> show homes
 adrci> set home diag/rdbms/prim/PRIM
 adrci> show alert -tail 200
@@ -395,7 +395,7 @@ Para simular impactos de rede, uma abordagem prática é usar traffic shaping no
 
 Gerador simples de carga de commits:
 
-```
+```text
 sqlCopy-- tabela
 CREATE TABLE t_commit (id NUMBER, payload VARCHAR2(100), ts TIMESTAMP DEFAULT SYSTIMESTAMP);
 
@@ -413,7 +413,7 @@ END;
 
 Variante para controlar taxa (sleep) e simular TPS estável:
 
-```
+```text
 sqlCopyDECLARE
   i NUMBER;
 BEGIN
@@ -505,7 +505,7 @@ Os números acima são plausíveis porque o custo mínimo de SYNC inclui o ciclo
 
 Regra operacional: você escolhe primeiro por **RPO**, depois você otimiza por **latência**.
 
-```
+```text
 mermaidCopyflowchart TD
   A[Definir RPO/RTO e SLA] --> B{RPO precisa ser 0?}
   B -- "Nao" --> C[Use ASYNC/NOAFFIRM (MaxPerformance)\nMonitore lag e apply]

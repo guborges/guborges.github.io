@@ -29,7 +29,7 @@ O download do Oracle AI Database 26ai pode ser feito diretamente no site oficial
 
 Arquivo utilizado neste procedimento:
 
-```
+```text
 LINUX.X64_2326100_db_home.zip
 ```
 
@@ -47,7 +47,7 @@ No meu caso:
 
 Para simplificar a preparação do ambiente, utilizei o pacote de pré-requisitos da Oracle:
 
-```
+```text
 dnf install -y oracle-database-preinstall-23ai
 ```
 > Obs: até o momento da escrita deste artigo, a Oracle ainda não disponibilizou o pacote `preinstall` específico para o 26ai. O pacote do **23ai é totalmente compatível**.
@@ -64,7 +64,7 @@ Esse pacote cria automaticamente:
 
 Criação dos diretórios padrão utilizados pela Oracle:
 
-```
+```text
 /u01/app/oracle/product/26.0.0/dbhome_1  -> Oracle Home
 /u01/app/oraInventory                    -> Inventory
 /u02/oradata                             -> Datafiles
@@ -72,7 +72,7 @@ Criação dos diretórios padrão utilizados pela Oracle:
 
 Comando utilizado (executado como root):
 
-```
+```text
 mkdir -p /u01/app/oracle/product/26.0.0/dbhome_1
 mkdir -p /u01/app/oraInventory
 mkdir -p /u02/oradata
@@ -85,7 +85,7 @@ chmod -R 775 /u01 /u02
 
 No arquivo `.bash_profile` do usuário `oracle`:
 
-```
+```text
 export ORACLE_BASE=/u01/app/oracle
 export ORACLE_HOME=$ORACLE_BASE/product/26.0.0/dbhome_1
 export ORACLE_SID=careca
@@ -98,14 +98,14 @@ export CV_ASSUME_DISTID=OL9
 
 Com o arquivo ZIP já copiado para o servidor, basta mover o arquivo para o `$ORACLE_HOME` e descompactar:
 
-```
+```text
 cd /u01/app/oracle/product/26.0.0/dbhome_1
 unzip LINUX.X64_2326100_db_home.zip
 ```
 
 Após o unzip, o diretório passa a conter o instalador:
 
-```
+```text
 runInstaller
 ```
 
@@ -152,7 +152,7 @@ A instalação foi feita utilizando o instalador gráfico (`runInstaller`).
 ![](7.png)
 ![](8.png)
 
-```
+```text
 /u01/app/oraInventory/orainstRoot.sh
 /u01/app/oracle/product/26.0.0/dbhome_1/root.sh
 ```
@@ -166,19 +166,19 @@ A instalação foi feita utilizando o instalador gráfico (`runInstaller`).
 Após a instalação, a validação pode ser feita conectando via SQL*Plus:
 
 ![](image-1.png)
-```
+```text
 sqlplus / as sysdba
 ```
 
 Consulta de versão:
 
-```
+```text
 select banner_full from v$version;
 ```
 
 Resultado:
 
-```
+```text
 Oracle AI Database 26ai Enterprise Edition Release 23.26.1.0.0 - Production&lt;br>Version 23.26.1.0.0
 ```
 > Importante: apesar da numeração **23.26.x**, o produto é oficialmente o **Oracle AI Database 26ai**. Essa é a nova estratégia de versionamento da Oracle.

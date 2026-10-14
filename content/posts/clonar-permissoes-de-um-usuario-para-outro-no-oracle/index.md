@@ -29,7 +29,7 @@ O resultado é um arquivo .sql pronto para aplicar no usuário de destino.
 
 ## Script
 
-```
+```text
 -- +-------------------------------------------------------------------------------------------+
 -- | Objetivo   : Clonar usuario Origem x Destino                                              |
 -- | Criador    : Gustavo Borges Evangelista                                                   |
@@ -87,13 +87,13 @@ SET TERMOUT ON
 
 ## Exemplo
 
-```
+```text
 sqlplus / as sysdba @clone_permissoes.sql UsuarioORIGEM UsuarioDESTINO
 ```
 
 Saída gerada no arquivo
 
-```
+```text
 GRANT "DBA" TO "UsuarioDESTINO";
 GRANT CREATE SESSION TO "UsuarioDESTINO";
 GRANT UNLIMITED TABLESPACE TO "UsuarioDESTINO";

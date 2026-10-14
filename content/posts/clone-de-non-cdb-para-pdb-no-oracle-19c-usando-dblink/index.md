@@ -14,13 +14,13 @@ Neste post eu mostro, passo a passo, como clonar um banco NON-CDB para dentro de
 
 O cenário é simples e totalmente reproduzível.
 
-```
+```text
 Origem
 Banco REALBALD
 Tipo NON-CDB
 Host 192.168.56.101
 ```
-```
+```text
 Destino
 Banco CDBCLONE
 Tipo CDB
@@ -39,14 +39,14 @@ Antes de clonar qualquer coisa, é importante provar que o que existe no NON-CDB
 
 No REALBALD:
 
-```
+```text
 CREATE USER bald_test IDENTIFIED BY bald123;
 GRANT CREATE SESSION TO bald_test;
 ```![](image.png)
 
 Confirmando que o usuário existe:
 
-```
+```text
 select username from dba_users where username = 'BALD_TEST';
 ```![](image-1.png)
 
@@ -56,7 +56,7 @@ No banco de origem, é necessário criar um usuário que será usado pelo DBLINK
 
 No REALBALD:
 
-```
+```text
 CREATE USER remote_clone_user IDENTIFIED BY "2025!bald";
 GRANT CREATE SESSION, CREATE PLUGGABLE DATABASE TO remote_clone_user;
 ```
@@ -67,7 +67,7 @@ Agora, no banco de destino, criamos o DBLINK apontando para o REALBALD.
 
 No CDBCLONE, conectado no CDB root:
 
-```
+```text
 CREATE DATABASE LINK CLONE_REALBALD
 CONNECT TO remote_clone_user IDENTIFIED BY "2025!bald"
 USING '(DESCRIPTION=
@@ -82,7 +82,7 @@ USING '(DESCRIPTION=
 
 Antes de seguir, sempre valido o DBLINK.
 
-```
+```text
 select * from global_name@CLONE_REALBALD;
 ```![](image-2.png)
 
@@ -92,7 +92,7 @@ Como o destino usa OMF, não preciso especificar FILE_NAME_CONVERT. O Oracle vai
 
 No CDBCLONE, executo o clone propriamente dito.
 
-```
+```text
 create pluggable database BALDLAB
 from REALBALD@CLONE_REALBALD
 keystore identified by "2025!bald"
@@ -103,7 +103,7 @@ Esse comando copia toda a estrutura do NON-CDB REALBALD para dentro do CDBCLONE,
 
 Como a origem é um NON-CDB, é obrigatório executar o processo de conversão para PDB. Esse passo não é opcional.
 
-```
+```text
 alter pluggable database BALDLAB open restricted;
 alter session set container = BALDLAB;
 @?/rdbms/admin/noncdb_to_pdb.sql
@@ -111,7 +111,7 @@ alter session set container = BALDLAB;
 
 Após a conversão, valido componentes e patches.
 
-```
+```text
 select patch_id, status, description from dba_registry_sqlpatch;
 
 select comp_id, comp_name, version, status from dba_registry;
@@ -119,14 +119,14 @@ select comp_id, comp_name, version, status from dba_registry;
 
 Se existir qualquer divergência de patch, executo o datapatch apontando para a PDB.
 
-```
+```text
 cd $ORACLE_HOME/OPatch
 ./datapatch -pdb "BALDLAB" -verbose
 ```
 
 Com a PDB ajustada, faço um restart simples para garantir estado limpo.
 
-```
+```text
 alter pluggable database BALDLAB close immediate;
 alter pluggable database BALDLAB open;
 ```
@@ -135,7 +135,7 @@ Agora vem a prova final de que o clone realmente funcionou.
 
 Conectado na PDB BALDLAB:
 
-```
+```text
 select username from dba_users where username = 'BALD_TEST';
 ```
 
@@ -145,7 +145,7 @@ O usuário criado no NON-CDB REALBALD aparece na PDB BALDLAB, comprovando que o 
 
 Por fim, crio um service dedicado para a PDB e salvo o estado para auto open.
 
-```
+```text
 begin
     DBMS_SERVICE.CREATE_SERVICE('svc_baldlab','baldlab.local');
     DBMS_SERVICE.START_SERVICE('svc_baldlab', DBMS_SERVICE.ALL_INSTANCES);

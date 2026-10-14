@@ -51,7 +51,7 @@ O resultado que chega no e-mail é um dashboard visual completo com KPIs, barras
 
 O projeto é simples e autocontido:
 
-```
+```text
 mysql_hc/
 ├── health_mysql.sh       # Script principal: coleta + geração HTML + chamada do sendEmail
 ├── sendEmail             # Script Perl standalone para envio SMTP
@@ -67,7 +67,7 @@ O diretório `logs/` é criado automaticamente pelo script. Os relatórios são 
 
 No final do `health_mysql.sh`, a chamada para envio do e-mail é feita assim:
 
-```
+```text
 SEND_EMAIL="/usr/bin/perl /home/mysqlemail/sendEmail"
 
 ${SEND_EMAIL} \
@@ -110,7 +110,7 @@ Uma das maiores vantagens do sendEmail é a portabilidade. Como ele é um arquiv
 
 Na prática, o que fiz foi:
 
-```
+```text
 # No servidor de origem (Exadata, por exemplo):
 scp /opt/scripts/sendEmail usuario@novo-servidor:/home/mysqlemail/sendEmail
 
@@ -132,7 +132,7 @@ Toda a coleta de dados é feita via queries diretas no MySQL. Para dar uma ideia
 
 **Databases por tamanho e fragmentação** consulta no `information_schema.tables` agregando `data_length`, `index_length` e `data_free` por schema:
 
-```
+```text
 SELECT
     table_schema,
     ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS size_mb,
@@ -150,7 +150,7 @@ ORDER BY SUM(data_length + index_length) DESC;
 
 **Top queries por tempo médio** consulta no `performance_schema.events_statements_summary_by_digest`:
 
-```
+```text
 SELECT
     LEFT(DIGEST_TEXT, 80),
     COUNT_STAR,
@@ -170,7 +170,7 @@ LIMIT 5;
 
 **Tabelas sem PRIMARY KEY** join entre `information_schema.tables` e `table_constraints`:
 
-```
+```text
 SELECT
     COUNT(*)
 FROM information_schema.tables t
@@ -198,7 +198,7 @@ Para não estender demais este artigo, optei por manter aqui apenas os trechos m
 
 Para execução automática diária, basta adicionar uma entrada no crontab:
 
-```
+```text
 # Health Check MySQL - execução diária às 08:00
 0 8 * * * /home/mysqlemail/mysql_hc/health_mysql.sh >> /home/mysqlemail/mysql_hc/logs/healthcheck_cron.log 2>&amp;1
 ```

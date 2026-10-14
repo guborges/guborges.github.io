@@ -16,7 +16,7 @@ Abaixo está o passo a passo completo, com caminhos absolutos e comandos `cat` p
 
 No exemplo, o diretório base do projeto será:
 
-```
+```text
 /home/lab01/project01
 ```
 
@@ -24,7 +24,7 @@ Ajuste o lab01 se o seu usuário for outro. Os comandos abaixo consideram que vo
 
 Crie a estrutura de diretórios:
 
-```
+```text
 mkdir -p /home/lab01/project01/playbooks/templates
 mkdir -p /home/lab01/project01/vars
 cd /home/lab01/project01
@@ -32,7 +32,7 @@ cd /home/lab01/project01
 
 Ao final, você terá:
 
-```
+```text
 /home/lab01/project01/
 ├── inventory
 ├── playbooks/
@@ -58,7 +58,7 @@ Como o Ansible será executado na própria VM que vai receber o PostgreSQL, o in
 
 Crie o arquivo de inventory:
 
-```
+```text
 cat > /home/lab01/project01/inventory &lt;&lt; 'EOF'
 [dbservers]
 127.0.0.1 ansible_connection=local
@@ -71,7 +71,7 @@ Esse arquivo define um grupo dbservers que aponta para o próprio host local, se
 
 Crie o arquivo de variáveis:
 
-```
+```text
 cat > /home/lab01/project01/vars/postgres.yml << 'EOF'
 postgres_version: "16"
 postgres_user: "admin"
@@ -94,7 +94,7 @@ Função de cada variável:
 
 Crie o template Jinja2 que será usado para gerar o docker-compose final:
 
-```
+```text
 cat > /home/lab01/project01/playbooks/templates/docker-compose.yml.j2 << 'EOF'
 version: "3.9"
 
@@ -121,7 +121,7 @@ Esse playbook prepara a VM: instala dependências, adiciona o repositório ofici
 
 Crie o playbook:
 
-```
+```text
 cat > /home/lab01/project01/playbooks/install_docker.yml << 'EOF'
 - hosts: dbservers
   become: yes
@@ -164,7 +164,7 @@ Esse playbook será executado localmente (por causa do inventory) e deixará o D
 
 Agora o playbook que efetivamente sobe o PostgreSQL via Docker:
 
-```
+```text
 cat > /home/lab01/project01/playbooks/deploy_postgres.yml << 'EOF'
 - hosts: dbservers
   become: yes
@@ -200,26 +200,26 @@ Esse playbook faz três coisas:
 
 Antes de rodar o Ansible, certifique-se de que ele está instalado:
 
-```
+```text
 ansible-playbook --version
 ```
 
 Se não estiver, instale:
 
-```
+```text
 sudo apt update
 sudo apt install -y ansible-core
 ```
 
 Depois, sempre a partir do diretório do projeto:
 
-```
+```text
 cd /home/lab01/project01
 ```
 
 ### Instalar Docker
 
-```
+```text
 ansible-playbook -i inventory playbooks/install_docker.yml
 ```
 
@@ -227,7 +227,7 @@ Ao final, a própria VM 192.168.0.101 estará com Docker instalado e pronto.
 
 ### Subir PostgreSQL
 
-```
+```text
 ansible-playbook -i inventory playbooks/deploy_postgres.yml
 ```
 
@@ -239,20 +239,20 @@ Agora, ainda na própria VM 192.168.0.101, valide se o contêiner e o banco est�
 
 ### Verificar se o contêiner está rodando
 
-```
+```text
 docker ps
 ```
 
 Saída esperada (similar):
 
-```
+```text
 CONTAINER ID   IMAGE            COMMAND                  STATUS         NAMES
 xxxxxxx        postgres:16      "docker-entrypoint.s…"   Up XX seconds  postgres_ansible
 ```![](image-8-1024x76.png)
 
 ### Testar conexão com o PostgreSQL
 
-```
+```text
 docker exec -it postgres_ansible psql -U admin -d appdb -c "SELECT version();"
 ```
 
@@ -262,13 +262,13 @@ Você deve ver a versão do PostgreSQL 16.
 
 Entrando no psql:
 
-```
+```text
 docker exec -it postgres_ansible psql -U admin -d appdb
 ```
 
 Dentro do psql:
 
-```
+```text
 CREATE TABLE teste (
     id serial PRIMARY KEY,
     nome text
@@ -291,7 +291,7 @@ Isso confirma que o banco está aceitando conexões, criando objetos e persistin
 
 Do diretório do projeto:
 
-```
+```text
 cd /home/lab01/project01
 ansible-playbook -i inventory playbooks/deploy_postgres.yml
 ```
@@ -302,20 +302,20 @@ O comportamento esperado é que nada quebre. O playbook deve ser seguro para rod
 
 Pare e remova o contêiner manualmente:
 
-```
+```text
 docker rm -f postgres_ansible
 ```
 
 Depois, reprovisione com o mesmo playbook:
 
-```
+```text
 cd /home/lab01/project01
 ansible-playbook -i inventory playbooks/deploy_postgres.yml
 ```
 
 Valide novamente:
 
-```
+```text
 docker ps
 docker exec -it postgres_ansible psql -U admin -d appdb -c "SELECT version();"
 ```![](image-7-1024x141.png)

@@ -29,14 +29,14 @@ Tudo isso organizado em /home/lab10/projeto10, pronto para subir, derrubar e rec
 
 Crie a estrutura base:
 
-```
+```text
 mkdir -p /home/lab10/projeto10/{app,haproxy,monitoring,backup,automation,cicd/sql,data}
 cd /home/lab10/projeto10
 ```
 
 Estrutura final:
 
-```
+```text
 /home/lab10/projeto10
 ├── docker-compose.yml
 ├── app/
@@ -64,14 +64,14 @@ A aplicação representa um cenário real: grava e lê usuários na tabela users
 
 ## requirements.txt
 
-```
+```text
 cd /home/lab10/projeto10/app
 vi requirements.txt
 ```
 
 Conteúdo:
 
-```
+```text
 fastapi
 uvicorn
 psycopg2-binary
@@ -79,14 +79,14 @@ psycopg2-binary
 
 ## [app.py](http://app.py)
 
-```
+```text
 cd /home/lab10/projeto10/app
 vi app.py
 ```
 
 Conteúdo:
 
-```
+```text
 from fastapi import FastAPI
 import psycopg2
 import os
@@ -123,14 +123,14 @@ def create_user(name: str):
 
 ## Dockerfile
 
-```
+```text
 cd /home/lab10/projeto10/app
 vi Dockerfile
 ```
 
 Conteúdo:
 
-```
+```text
 FROM python:3.11-slim
 
 WORKDIR /app
@@ -149,14 +149,14 @@ As migrações garantem que o schema do banco acompanhe a aplicação.
 
 ## V1__create_users.sql
 
-```
+```text
 cd /home/lab10/projeto10/cicd/sql
 vi V1__create_users.sql
 ```
 
 Conteúdo:
 
-```
+```text
 CREATE TABLE IF NOT EXISTS users (
     id BIGSERIAL PRIMARY KEY,
     name TEXT NOT NULL,
@@ -168,14 +168,14 @@ CREATE TABLE IF NOT EXISTS users (
 
 Esse arquivo é um exemplo de pipeline (GitHub Actions) rodando o Flyway:
 
-```
+```text
 cd /home/lab10/projeto10/cicd
 vi flyway.yml
 ```
 
 Conteúdo:
 
-```
+```text
 name: Flyway Migrations
 
 on:
@@ -202,14 +202,14 @@ jobs:
 
 O HAProxy será o endpoint único das conexões da aplicação, sempre apontando para o nó líder.
 
-```
+```text
 cd /home/lab10/projeto10/haproxy
 vi haproxy.cfg
 ```
 
 Conteúdo:
 
-```
+```text
 global
     daemon
     maxconn 256
@@ -236,14 +236,14 @@ backend pg_master
 
 ## prometheus.yml
 
-```
+```text
 cd /home/lab10/projeto10/monitoring
 vi prometheus.yml
 ```
 
 Conteúdo:
 
-```
+```text
 global:
   scrape_interval: 15s
 
@@ -255,14 +255,14 @@ scrape_configs:
 
 ## exporter.env
 
-```
+```text
 cd /home/lab10/projeto10/monitoring
 vi exporter.env
 ```
 
 Conteúdo:
 
-```
+```text
 DATA_SOURCE_NAME=postgresql://postgres:postgrespass@projeto10-patroni1:5432/appdb?sslmode=disable
 ```
 
@@ -270,14 +270,14 @@ DATA_SOURCE_NAME=postgresql://postgres:postgrespass@projeto10-patroni1:5432/appd
 
 Um backup lógico simples com pg_dumpall, rodando de dentro do contêiner do líder (ou réplica).
 
-```
+```text
 cd /home/lab10/projeto10/backup
 vi run_backup.sh
 ```
 
 Conteúdo:
 
-```
+```text
 #!/bin/bash
 
 BACKUP_DIR="/home/lab10/projeto10/backup/files"
@@ -297,7 +297,7 @@ fi
 
 Permissão:
 
-```
+```text
 cd /home/lab10/projeto10/backup
 chmod +x run_backup.sh
 ```
@@ -306,14 +306,14 @@ chmod +x run_backup.sh
 
 O healthcheck mostra o estado do cluster via Patroni e faz um SELECT via HAProxy.
 
-```
+```text
 cd /home/lab10/projeto10/automation
 vi healthcheck.sh
 ```
 
 Conteúdo:
 
-```
+```text
 #!/bin/bash
 
 echo "=== Estado do cluster (patronictl list) ==="
@@ -332,21 +332,21 @@ docker exec projeto10-patroni1 psql -h projeto10-haproxy -p 5000 -U postgres -d 
 
 Permissão:
 
-```
+```text
 cd /home/lab10/projeto10/automation
 chmod +x healthcheck.sh
 ```
 
 # Docker Compose com Spilo, HAProxy, App e Monitoramento
 
-```
+```text
 cd /home/lab10/projeto10
 vi docker-compose.yml
 ```
 
 Conteúdo:
 
-```
+```text
 services:
   etcd:
     image: quay.io/coreos/etcd:v3.5.15
@@ -503,7 +503,7 @@ networks:
 
 # Subindo o ambiente
 
-```
+```text
 cd /home/lab10/projeto10
 
 docker compose down
@@ -515,7 +515,7 @@ docker ps
 
 Confirme o estado do cluster:
 
-```
+```text
 docker exec projeto10-patroni1 patronictl list
 ```![](image-34.png)
 
@@ -525,7 +525,7 @@ Você deve ver um Leader running (pode ser o patroni1 ou o patroni2) e um Replic
 
 Sempre crio o appdb via HAProxy, independente de quem é o líder:
 
-```
+```text
 cd /home/lab10/projeto10
 
 docker exec -it projeto10-patroni1 psql -h projeto10-haproxy -p 5000 -U postgres -d postgres -c "CREATE DATABASE appdb;"
@@ -535,13 +535,13 @@ Se o banco já existir, vai retornar apenas um aviso.
 
 Agora rodo o Flyway:
 
-```
+```text
 docker compose run --rm flyway
 ```![](image-35.png)
 
 Verificação:
 
-```
+```text
 docker exec -it projeto10-patroni2 psql -U postgres -d appdb -c "\\dt"
 ```![](image-36.png)
 
@@ -551,7 +551,7 @@ A tabela users deve aparecer.
 
 ## Healthcheck
 
-```
+```text
 cd /home/lab10/projeto10
 ./automation/healthcheck.sh
 ```![](image-37.png)
@@ -563,13 +563,13 @@ Você verá:
 
 ## Criando um usuário via API
 
-```
+```text
 curl -X POST http://localhost:8080/users/Gustavo
 ```![](image-38.png)
 
 ## Listando usuários
 
-```
+```text
 curl http://localhost:8080/users
 ```
 
@@ -579,7 +579,7 @@ Em vez de “puxar o cabo” com docker stop, aqui uso o switchover controlado d
 
 Primeiro, vejo quem é líder:
 
-```
+```text
 docker exec projeto10-patroni1 patronictl list
 ```
 
@@ -590,13 +590,13 @@ Supondo que a saída mostre:
 
 Posso inverter os papéis assim:
 
-```
+```text
 docker exec -it projeto10-patroni1 patronictl switchover
 ```![](image-40.png)
 
 Depois confiro de novo:
 
-```
+```text
 docker exec projeto10-patroni1 patronictl list
 ```
 
@@ -604,7 +604,7 @@ O líder deve ter trocado.
 
 Agora testo a aplicação outra vez:
 
-```
+```text
 curl http://localhost:8080/users
 ```
 
@@ -614,7 +614,7 @@ Se quiser, você pode repetir o switchover invertendo os parâmetros (promovendo
 
 # Rodando backup
 
-```
+```text
 cd /home/lab10/projeto10/backup
 ./run_backup.sh
 

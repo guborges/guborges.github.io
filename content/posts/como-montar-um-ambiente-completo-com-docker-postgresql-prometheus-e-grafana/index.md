@@ -18,14 +18,14 @@ O primeiro passo é criar a estrutura de pastas onde vamos organizar tudo.
 
 Execute no seu Linux:
 
-```
+```text
 mkdir -p ~/pg-stack/monitoring
 cd ~/pg-stack
 ```
 
 Resultado esperado:
 
-```
+```text
 ~/pg-stack/
        |----> monitoring/
 ```
@@ -36,13 +36,13 @@ Tudo será configurado dentro dessa pasta.
 
 Agora dentro da pasta pg-stack, crie o arquivo:
 
-```
+```text
 vi docker-compose.yml
 ```
 
 Cole o conteúdo completo:
 
-```
+```text
 services:
   postgres:
     image: postgres:16
@@ -121,14 +121,14 @@ Salve e saia.
 
 Entre na pasta de monitoramento:
 
-```
+```text
 cd monitoring
 vi prometheus.yml
 ```
 
 Adicione:
 
-```
+```text
 global:
   scrape_interval: 15s
 
@@ -140,7 +140,7 @@ scrape_configs:
 
 Depois:
 
-```
+```text
 cd ..
 ```
 
@@ -148,19 +148,19 @@ cd ..
 
 Dentro da pasta pg-stack:
 
-```
+```text
 docker compose up -d
 ```![](image-2.png)
 
 Verifique:
 
-```
+```text
 docker compose ps
 ```![](image-3-1024x83.png)
 
 Resultado esperado:
 
-```
+```text
 postgres16        Up
 pgadmin4          Up
 pg_exporter       Up

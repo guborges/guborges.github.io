@@ -14,7 +14,7 @@ Esse laboratório funciona 100%, está enxuto, prático e serve como base para q
 
 # Estrutura do Projeto
 
-```
+```text
 project03/
 ├── primary_data/    (dados primary)
 ├── replica_data/    (dados replica)
@@ -28,7 +28,7 @@ Essa estrutura deixa tudo organizado, com dados persistentes e compose isolado.
 
 Crie tudo com:
 
-```
+```text
 mkdir -p /home/lab03/project03/{primary_data,replica_data,compose}
 cd /home/lab03/project03/compose
 ```
@@ -37,13 +37,13 @@ cd /home/lab03/project03/compose
 
 Arquivo:
 
-```
+```text
 /home/lab03/project03/compose/docker-compose.yml
 ```
 
 Crie assim:
 
-```
+```text
 cat > /home/lab03/project03/compose/docker-compose.yml <<EOF
 services:
   pg_primary:
@@ -69,7 +69,7 @@ Esse compose sobe **apenas o primary** — o replica será criado depois (intenc
 
 # Subindo o Primary
 
-```
+```text
 cd /home/lab03/project03/compose
 docker compose up -d
 docker ps
@@ -77,13 +77,13 @@ docker ps
 
 Teste rápido:
 
-```
+```text
 docker exec -it pg_primary psql -U postgres -d appdb -c "SELECT 'PRIMARY OK' AS status;"
 ```
 
 Crie uma tabela de teste:
 
-```
+```text
 docker exec -it pg_primary psql -U postgres -d appdb -c "CREATE TABLE teste (id int, nome text);"
 docker exec -it pg_primary psql -U postgres -d appdb -c "INSERT INTO teste VALUES (1,'replicacao ok');"
 ```
@@ -92,33 +92,33 @@ docker exec -it pg_primary psql -U postgres -d appdb -c "INSERT INTO teste VALUE
 
 Entre no container:
 
-```
+```text
 docker exec -it pg_primary bash
 ```
 
 Edite o arquivo, adicione no final:
 
-```
+```text
 echo "host    replication     postgres        0.0.0.0/0            trust" >> $PGDATA/pg_hba.conf
 echo "host    all             all             0.0.0.0/0            trust" >> $PGDATA/pg_hba.conf
 ```
 
 Saia e reinicie:
 
-```
+```text
 exit
 docker restart pg_primary
 ```
 
 # Limpando a pasta da Replica (garantir ambiente zero)
 
-```
+```text
 rm -rf /home/lab03/project03/replica_data/*
 ```
 
 # Executando pg_basebackup para preparar o Standby
 
-```
+```text
 docker run --rm \
   --network compose_pgnet \
   -e PGPASSWORD=postgres \
@@ -129,7 +129,7 @@ docker run --rm \
 
 Se aparecer:
 
-```
+```text
 waiting for checkpoint
 30775/30775 kB ... OK
 ```
@@ -138,13 +138,13 @@ Perfeito.
 
 # Ajustando permissões (importantíssimo)
 
-```
+```text
 chown -R 999:999 /home/lab03/project03/replica_data
 ```
 
 # Subindo o container da réplica
 
-```
+```text
 docker run -d \\
   --name pg_replica \\
   --network compose_pgnet \\
@@ -156,13 +156,13 @@ docker run -d \\
 
 Verifique:
 
-```
+```text
 docker ps
 ```
 
 # Testando se a réplica está em modo recovery
 
-```
+```text
 docker exec -it pg_replica psql -U postgres -c "SELECT pg_is_in_recovery();"
 ```
 
@@ -172,7 +172,7 @@ Resultado esperado:
 
 Testando leitura dos dados:
 
-```
+```text
 docker exec -it pg_replica psql -U postgres -d appdb -c "SELECT * FROM teste;"
 ```
 
@@ -184,7 +184,7 @@ A REPLICAÇÃO ESTÁ FUNCIONANDO!!! Xique demais.
 
 # Teste Final: Inserindo no Primary e lendo no Standby
 
-```
+```text
 docker exec -it pg_primary psql -U postgres -d appdb -c "INSERT INTO teste VALUES (2,'funciona demais');"
 docker exec -it pg_replica psql -U postgres -d appdb -c "SELECT * FROM teste;"
 ```

@@ -24,7 +24,7 @@ Este exemplo cria duas tabelas simples: **DEPARTAMENTOS** e **FUNCIONARIOS** e u
 
 ### 1. Criar tabelas e inserir dados
 
-```
+```text
 -- tabela alvo
 CREATE TABLE departamentos (
   deptno         NUMBER PRIMARY KEY,
@@ -52,13 +52,13 @@ COMMIT;
 
 ### 2. Verificar o estado inicial
 
-```
+```text
 SELECT deptno, total_salarios FROM departamentos;
 ```
 
 Resultado esperado:
 
-```
+```text
     DEPTNO TOTAL_SALARIOS
 ---------- --------------
         10              0
@@ -69,7 +69,7 @@ Resultado esperado:
 
 No 26Ai o join direto permite relacionar a tabela alvo com a tabela fonte dentro da cláusula FROM. A sintaxe se parece com um SELECT, mas aplica a atualização ao SET:
 
-```
+```text
 UPDATE departamentos d
    SET d.total_salarios = f.total
   FROM (
@@ -84,7 +84,7 @@ Nesse exemplo, a sub‑query f soma os salários por departamento e disponibiliz
 
 Apenas para exemplo, no 19c a querie ficaria da seguinte forma:
 
-```
+```text
 UPDATE departamentos d
    SET d.total_salarios = (
          SELECT SUM(f.salario)
@@ -100,13 +100,13 @@ UPDATE departamentos d
 
 ### 4. Conferir o resultado
 
-```
+```text
 SELECT deptno, total_salarios FROM departamentos;
 ```
 
 Resultado esperado:
 
-```
+```text
     DEPTNO TOTAL_SALARIOS
 ---------- --------------
         10           3000
@@ -123,7 +123,7 @@ O otimizador do Oracle materializa a sub‑query ou tabela de origem referenciad
 
 No Oracle 19c, a sintaxe UPDATE ... FROM ou DELETE ... FROM não é suportada. Para realizar atualizações multi‑tabela, era preciso recorrer a MERGE:
 
-```
+```text
 MERGE INTO departamentos d
 USING (
        SELECT deptno, SUM(salario) total

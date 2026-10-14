@@ -42,7 +42,7 @@ Características principais do switchover:
 
 Com o Data Guard Broker, o switchover é simples e previsível:
 
-```
+```text
 SWITCHOVER TO 'db_unique_name';
 ```
 
@@ -71,7 +71,7 @@ Características principais do failover:
 
 No Broker, o comando é direto:
 
-```
+```text
 FAILOVER TO 'db_unique_name';
 ```
 

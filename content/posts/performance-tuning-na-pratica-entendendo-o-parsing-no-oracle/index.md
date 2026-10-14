@@ -38,7 +38,7 @@ Depois disso, o Oracle segue para as fases **Execute** e **Fetch**.
 
 **Parse vs Execute (visão de sessão):**
 
-```
+```text
 -- +-------------------------------------------------------------------------------------------+
 -- | Objetivo   : Monitorar Parse vs Execute por sessão no Oracle                              |
 -- | Descrição  : Exibe, para cada sessão ativa, a quantidade total de parses e execuções.     |
@@ -74,7 +74,7 @@ ORDER BY parses DESC;
 
 **Taxa de hard parse (instância):**
 
-```
+```text
 SELECT
   SUM(CASE WHEN name = 'parse count (hard)' THEN value END) hard_parses,
   SUM(CASE WHEN name = 'parse count (total)' THEN value END) total_parses,
@@ -92,7 +92,7 @@ WHERE name IN ('parse count (hard)', 'parse count (total)');
 
 **Quem mais “parseia” (SQLs):**
 
-```
+```text
 SELECT * FROM (
   SELECT sql_id, executions, parse_calls,
          ROUND(parse_calls/NULLIF(executions,0),2) parse_per_exec,
@@ -109,7 +109,7 @@ SELECT * FROM (
 
 **Contendas no Shared Pool/Library Cache:**
 
-```
+```text
 SELECT namespace, pins, pinhits, reloads, invalidations
 FROM v$librarycache
 ORDER BY reloads DESC;
@@ -133,7 +133,7 @@ ORDER BY reloads DESC;
 
 **Ruim:**
 
-```
+```text
 SELECT * FROM orders WHERE customer_id = 101;
 SELECT * FROM orders WHERE customer_id = 102;
 -- mil literais = mil cursores
@@ -141,7 +141,7 @@ SELECT * FROM orders WHERE customer_id = 102;
 
 **Bom:**
 
-```
+```text
 SELECT * FROM orders WHERE customer_id = :customer_id;
 -- um cursor, mil execuções
 ```

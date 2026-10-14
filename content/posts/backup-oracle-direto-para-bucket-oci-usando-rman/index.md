@@ -27,7 +27,7 @@ No OCI, você deve garantir:
 
 Minha organização básica fica assim:
 
-```
+```text
 /home/oracle/scripts/backup/          scripts de execução
 /home/oracle/scripts/backup/logs/     logs
 /u01/app/oracle/immutable/lib/        libopc.so
@@ -36,7 +36,7 @@ Minha organização básica fica assim:
 
 Um arquivo .ora típico:
 
-```
+```text
 OPC_HOST=https://objectstorage.sa-saopaulo-1.oraclecloud.com
 OPC_BUCKET=BUCKET_BKP_GUSTAVO
 OPC_TEMP_BUCKET=BUCKET_PARA_TEMPS
@@ -52,7 +52,7 @@ OPC_STORAGE_CLASS=Standard
 
 A execução do backup fica assim:
 
-```
+```text
 #!/bin/bash
 VAR_SID=GUSTAVOBANCO
 VAR_TIPO=W
@@ -76,7 +76,7 @@ EOF
 
 O crontab organiza tudo:
 
-```
+```text
 1 0 * * 1-5 /home/oracle/scripts/backup/exec_bkp.sh D > /home/oracle/scripts/backup/logs/bkp_D.log 2>&1
 1 0 * * 6   /home/oracle/scripts/backup/exec_bkp.sh W > /home/oracle/scripts/backup/logs/bkp_W.log 2>&1
 1 0 1 * *   /home/oracle/scripts/backup/exec_bkp.sh M > /home/oracle/scripts/backup/logs/bkp_M.log 2>&1

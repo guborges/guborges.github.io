@@ -29,7 +29,7 @@ A meta não é só aplicar migrações é aplicar **com garantia, controle e gov
 
 A estrutura do laboratório segue este formato:
 
-```
+```text
 /home/lab08/lab08-cicd-migrations
 ├── sql/               # Migrações Flyway
 ├── docker/            # Banco de testes do Flyway
@@ -52,7 +52,7 @@ Cada comando faz exatamente uma parte da construção e está explicado antes da
 
 Essas pastas são o esqueleto do projeto:
 
-```
+```text
 mkdir -p /home/lab08/lab08-cicd-migrations/sql
 mkdir -p /home/lab08/lab08-cicd-migrations/docker
 mkdir -p /home/lab08/lab08-cicd-migrations/.github/workflows
@@ -70,7 +70,7 @@ Separar assim facilita manutenção, testes e CI/CD.
 
 O Flyway usa a convenção:
 
-```
+```text
 V1__descricao.sql
 V2__descricao.sql
 V3__descricao.sql
@@ -80,7 +80,7 @@ Cada arquivo representa uma evolução incremental no schema.
 
 ### **Criando a migração V1 (criação da tabela principal)**
 
-```
+```text
 cat << 'EOF' > /home/lab08/lab08-cicd-migrations/sql/V1__create_tables.sql
 CREATE TABLE customers (
     id BIGSERIAL PRIMARY KEY,
@@ -95,7 +95,7 @@ Essa é a base do sistema: criamos a tabela customers.
 
 ### **Criando a migração V2 (índice)**
 
-```
+```text
 cat << 'EOF' > /home/lab08/lab08-cicd-migrations/sql/V2__add_indexes.sql
 CREATE INDEX idx_customers_email ON customers(email);
 EOF
@@ -105,7 +105,7 @@ EOF
 
 ### **Criando a migração V3 (nova coluna)**
 
-```
+```text
 cat << 'EOF' > /home/lab08/lab08-cicd-migrations/sql/V3__add_column_status.sql
 ALTER TABLE customers
 ADD COLUMN status TEXT DEFAULT 'active';
@@ -120,7 +120,7 @@ Essa etapa cria o PostgreSQL efêmero onde o Flyway vai validar as migrações.
 
 ### **Criando o docker-compose.yml**
 
-```
+```text
 cat << 'EOF' > /home/lab08/lab08-cicd-migrations/docker/docker-compose.yml
 services:
   postgres:
@@ -146,14 +146,14 @@ Por que isso é importante?
 
 Agora vamos subir o PostgreSQL:
 
-```
+```text
 cd /home/lab08/lab08-cicd-migrations/docker
 docker compose up -d
 ```
 
 Verificar:
 
-```
+```text
 docker ps | grep pg_flyway
 ```
 
@@ -161,7 +161,7 @@ Se aparecer a porta 5432 mapeada → tudo certo.
 
 # **Instalando o Flyway**
 
-```
+```text
 cd /opt
 sudo wget <https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/10.17.0/flyway-commandline-10.17.0-linux-x64.tar.gz>
 sudo tar -xvf flyway-commandline-10.17.0-linux-x64.tar.gz
@@ -171,7 +171,7 @@ sudo ln -s /opt/flyway/flyway /usr/local/bin/flyway
 
 Teste:
 
-```
+```text
 flyway -v
 ```
 
@@ -181,7 +181,7 @@ Aqui é onde tudo se valida de verdade.
 
 Use sempre caminho absoluto:
 
-```
+```text
 flyway \\
   -url=jdbc:postgresql://localhost:5432/appdb \\
   -user=admin \\
@@ -192,7 +192,7 @@ flyway \\
 
 Se você seguiu tudo certinho, verá:
 
-```
+```text
 Successfully validated 3 migrations
 Successfully applied 3 migrations
 ```
@@ -201,7 +201,7 @@ Essa é a prova que o projeto está funcionando.
 
 # **Validando no PostgreSQL**
 
-```
+```text
 docker exec -it pg_flyway psql -U admin -d appdb -c "\\dt"
 docker exec -it pg_flyway psql -U admin -d appdb -c "\\d customers"
 ```
@@ -226,7 +226,7 @@ Ao enviar uma migração para o GitHub, a pipeline:
 
 ### **Criando o arquivo flyway.yml**
 
-```
+```text
 cat << 'EOF' > /home/lab08/lab08-cicd-migrations/.github/workflows/flyway.yml
 name: Flyway Migrations
 

@@ -5,6 +5,6 @@ draft: true
 categories: ["Uncategorized"]
 ---
 
-```
+```text
 select yan macaco primata from macacolandia;
 ```

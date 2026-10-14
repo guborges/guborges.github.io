@@ -38,7 +38,7 @@ O SQLcl, a partir da versão 25.2, pode rodar como servidor MCP (já incluso) . 
 
 A configuração no Claude Desktop é um JSON de quatro linhas:
 
-```
+```text
 {
   "mcpServers": {
     "sqlcl": {
@@ -70,7 +70,7 @@ O trade-off: funciona apenas em Autonomous Database. Se o ambiente é on-premise
 
 O Select AI usa o package DBMS_CLOUD_AI para chamar LLMs externos (incluindo o Claude) diretamente de dentro do banco. Você cria um perfil com o provider Anthropic:
 
-```
+```text
 BEGIN
   DBMS_CLOUD_AI.CREATE_PROFILE(
     profile_name => 'ANTHROPIC',
@@ -90,7 +90,7 @@ END;
 
 Depois, é possível usar comandos como:
 
-```
+```text
 SELECT AI NARRATE
   'quais são os 5 funcionários com maior salário';
 
@@ -131,7 +131,7 @@ A conexão usada pelo MCP Server define o que o LLM pode fazer. Se você conecta
 
 Crie um usuário dedicado com apenas os privilégios necessários. Se o objetivo é consultar dados, dê apenas SELECT em tabelas específicas. Se precisa criar objetos, limite a um schema de desenvolvimento.
 
-```
+```text
 CREATE USER mcp_agent IDENTIFIED BY sua_melhor_senha;
 
 GRANT CONNECT TO mcp_agent;
@@ -152,7 +152,7 @@ O ambiente ideal para testes com MCP é uma cópia de desenvolvimento ou homolog
 
 O SQLcl MCP Server registra cada interação na tabela DBTOOLS$MCP_LOG. Consulte regularmente:
 
-```
+```text
 SELECT
     id,
     mcp_client,
@@ -168,7 +168,7 @@ ORDER BY
 
 Além disso, sessões MCP aparecem em V$SESSION com identificação do cliente e do modelo:
 
-```
+```text
 SELECT
     username,
     program,
@@ -203,7 +203,7 @@ Para o cenário Oracle especificamente, as defesas do próprio banco ajudam: Row
 
 **Solução:** Salve a conexão novamente:
 
-```
+```text
 sql /nolog
 
 SQL> conn -save minha_conexao -savepwd user/pass@host:1521/service

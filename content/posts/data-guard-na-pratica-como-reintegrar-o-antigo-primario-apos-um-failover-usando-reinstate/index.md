@@ -46,7 +46,7 @@ O primeiro passo operacional é entender exatamente como o Broker enxerga o ambi
 
 No DGMGRL, valide a configuração geral e os papéis dos bancos:
 
-```
+```text
 SHOW CONFIGURATION;
 SHOW CONFIGURATION VERBOSE;
 
@@ -62,13 +62,13 @@ O antigo primário não deve ser aberto. Ele precisa apenas estar disponível pa
 
 No sistema operacional, confirme que a instância está no ar:
 
-```
+```text
 ps -ef | grep pmon | grep AUTO
 ```
 
 Se necessário, inicie o banco manualmente apenas até MOUNT:
 
-```
+```text
 sqlplus / as sysdba
 STARTUP MOUNT;
 ```
@@ -81,13 +81,13 @@ Esse estado é suficiente. Qualquer tentativa de abrir o banco pode inviabilizar
 
 Antes de executar o reinstate, confirme que o Flashback Database está ativo no novo primário:
 
-```
+```text
 SELECT flashback_on FROM v$database;
 ```
 
 Também é importante validar o FRA configurado:
 
-```
+```text
 SHOW PARAMETER db_recovery_file_dest;
 ```
 
@@ -99,7 +99,7 @@ Sem flashback ativo, o Broker não consegue reconstruir o antigo primário autom
 
 Com o ambiente validado, o processo de reintegração acontece com um único comando:
 
-```
+```text
 REINSTATE DATABASE 'AUTO_U_BR';
 ```
 
@@ -118,14 +118,14 @@ Durante o reinstate, o acompanhamento dos logs é obrigatório.
 
 No antigo primário, acompanhe o alert.log e o log do Broker:
 
-```
+```text
 tail -200f /u01/app/oracle/diag/rdbms/auto_u_br/AUTOBR/trace/alert_AUTOBR.log
 tail -100f /u01/app/oracle/diag/rdbms/auto_u_br/AUTOBR/trace/drcAUTOBR.log
 ```
 
 No Broker, acompanhe o status e o lag:
 
-```
+```text
 SHOW CONFIGURATION;
 SHOW CONFIGURATION VERBOSE;
 SHOW CONFIGURATION LAG;
@@ -146,7 +146,7 @@ Ao final do processo, o resultado esperado é:
 
 Valide no Broker:
 
-```
+```text
 SHOW CONFIGURATION;
 SHOW CONFIGURATION VERBOSE;
 SHOW CONFIGURATION LAG;
@@ -154,7 +154,7 @@ SHOW CONFIGURATION LAG;
 
 E valide no standby via SQL:
 
-```
+```text
 SELECT name, open_mode, database_role FROM v$database;
 SELECT process, status FROM v$managed_standby WHERE process LIKE 'MRP%';
 ```![](image-11.png)
@@ -167,7 +167,7 @@ Com o ambiente estável, é possível executar um switchover de volta para o sit
 
 Antes do switchover, valide:
 
-```
+```text
 SHOW CONFIGURATION;
 SHOW CONFIGURATION LAG;
 VALIDATE DATABASE 'AUTO_U_BR';
@@ -176,13 +176,13 @@ VALIDATE DATABASE 'AUTO_U_US';
 
 Execute o switchover:
 
-```
+```text
 SWITCHOVER TO 'AUTO_U_BR';
 ```![](image-13.png)
 
 Após o switchover, valide novamente e garanta o apply no novo standby:
 
-```
+```text
 EDIT DATABASE 'AUTO_U_US' SET STATE='APPLY-ON';
 SHOW CONFIGURATION LAG;
 ```![](image-14.png)

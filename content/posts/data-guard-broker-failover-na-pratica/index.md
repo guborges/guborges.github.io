@@ -36,14 +36,14 @@ Primeira regra: failover sem log aberto é pedir para tomar susto.
 
 Eu deixo dois terminais no standby: um para executar e outro só para acompanhar alert.log e o log do Broker.
 
-```
+```text
 tail -200f /u01/app/oracle/diag/rdbms/auto_u_us/AUTOUS/trace/alert_AUTOUS.log
 tail -100f /u01/app/oracle/diag/rdbms/auto_u_us/AUTOUS/trace/drcAUTOUS.log
 ```
 
 Se eu ainda tiver acesso ao primário antes da falha, eu deixo o log dele pronto também:
 
-```
+```text
 tail -200f /u01/app/oracle/diag/rdbms/auto_u_br/AUTOBR/trace/alert_AUTOBR.log
 tail -100f /u01/app/oracle/diag/rdbms/auto_u_br/AUTOBR/trace/drcAUTOBR.log
 ```
@@ -60,7 +60,7 @@ Em produção, isso vira uma validação operacional: antes do failover, você t
 
 Com o primário indisponível, eu conecto no Broker a partir do standby:
 
-```
+```text
 SHOW CONFIGURATION;
 SHOW CONFIGURATION VERBOSE;
 SHOW CONFIGURATION LAG;
@@ -81,14 +81,14 @@ Se o broker ainda estiver mostrando o primário como ok por alguns minutos, eu n
 
 Se eu quero reinstate depois, eu preciso de flashback habilitado no standby antes do failover.
 
-```
+```text
 SELECT flashback_on FROM v$database;
 SHOW PARAMETER db_recovery_file_dest;
 ```
 
 Se não estiver ativo:
 
-```
+```text
 ALTER DATABASE FLASHBACK ON;
 ```
 
@@ -98,7 +98,7 @@ Esse passo muda totalmente o pós-evento, porque abre caminho para reintegrar o 
 
 Com o standby validado, eu executo o failover via Broker:
 
-```
+```text
 FAILOVER TO 'AUTO_U_US';
 ```
 
@@ -108,7 +108,7 @@ A partir daqui eu acompanho os logs e volto no broker para enxergar a transiçã
 
 No Broker:
 
-```
+```text
 SHOW CONFIGURATION;
 SHOW CONFIGURATION VERBOSE;
 SHOW CONFIGURATION LAG;
@@ -119,7 +119,7 @@ SHOW DATABASE VERBOSE 'AUTO_U_BR';
 
 No SQL:
 
-```
+```text
 SELECT name, open_mode, database_role FROM v$database;
 ```
 
@@ -132,13 +132,13 @@ O esperado é:
 
 Depois do failover, eu valido conexão. No lab eu faço um teste simples:
 
-```
+```text
 sqlplus sh/oracle@srvora3:1521/AUTOUS_SVC
 ```
 
 E se eu quiser validar escrita:
 
-```
+```text
 CREATE TABLE x AS SELECT * FROM dba_objects;
 SELECT COUNT(1) FROM x;
 ```

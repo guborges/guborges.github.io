@@ -24,14 +24,14 @@ Tudo organizado em /home/lab09/projeto09, pronto para ser destruído e recriado 
 
 Primeiro, criei a estrutura base do projeto:
 
-```
+```text
 mkdir -p /home/lab09/projeto09/{haproxy,monitoring,backup,automation,data}
 cd /home/lab09/projeto09
 ```
 
 A estrutura final fica assim:
 
-```
+```text
 /home/lab09/projeto09
 ├── docker-compose.yml
 ├── haproxy/
@@ -59,14 +59,14 @@ O docker-compose.yml orquestra tudo:
 - Prometheus
 - Grafana
 
-```
+```text
 cd /home/lab09/projeto09
 vi docker-compose.yml
 ```
 
 Cole dentro do vi:
 
-```
+```text
 services:
   etcd:
     image: quay.io/coreos/etcd:v3.5.15
@@ -202,7 +202,7 @@ Salvar e sair do vi.
 
 O HAProxy é o front-end do cluster: a aplicação só enxerga localhost:5000 (escrita) e localhost:7000 (leituras).
 
-```
+```text
 cd /home/lab09/projeto09
 mkdir -p haproxy
 cd haproxy
@@ -211,7 +211,7 @@ vi haproxy.cfg
 
 Conteúdo:
 
-```
+```text
 global
     daemon
     maxconn 256
@@ -249,7 +249,7 @@ backend pg_replicas
 
 O Prometheus coleta as métricas do exporter e o Grafana consome do Prometheus.
 
-```
+```text
 cd /home/lab09/projeto09
 mkdir -p monitoring
 cd monitoring
@@ -258,7 +258,7 @@ vi prometheus.yml
 
 Conteúdo:
 
-```
+```text
 global:
   scrape_interval: 15s
 
@@ -270,14 +270,14 @@ scrape_configs:
 
 Agora o arquivo de ambiente do exporter:
 
-```
+```text
 cd /home/lab09/projeto09/monitoring
 vi exporter.env
 ```
 
 Conteúdo:
 
-```
+```text
 DATA_SOURCE_NAME=postgresql://postgres:postgres@projeto09-patroni1:5432/postgres?sslmode=disable
 ```
 
@@ -287,7 +287,7 @@ O exporter conecta direto no projeto09-patroni1 (que será o líder inicial) com
 
 Para este lab usei pg_dumpall, que já vem dentro do container Spilo.
 
-```
+```text
 cd /home/lab09/projeto09
 mkdir -p backup
 cd backup
@@ -296,7 +296,7 @@ vi run_backup.sh
 
 Conteúdo:
 
-```
+```text
 #!/bin/bash
 
 BACKUP_DIR="/home/lab09/projeto09/backup/files"
@@ -316,7 +316,7 @@ fi
 
 Dar permissão de execução:
 
-```
+```text
 cd /home/lab09/projeto09/backup
 chmod +x run_backup.sh
 ```
@@ -328,7 +328,7 @@ Esse script faz duas coisas:
 - Mostra o estado do cluster pelo patronictl list
 - Executa um SELECT simples para validar o nó atual
 
-```
+```text
 cd /home/lab09/projeto09
 mkdir -p automation
 cd automation
@@ -337,7 +337,7 @@ vi healthcheck.sh
 
 Conteúdo:
 
-```
+```text
 #!/bin/bash
 
 echo "=== Estado do cluster (patronictl list) ==="
@@ -356,7 +356,7 @@ docker exec projeto09-patroni1 psql -U postgres -d postgres -c "SELECT inet_serv
 
 Permissão:
 
-```
+```text
 cd /home/lab09/projeto09/automation
 chmod +x healthcheck.sh
 ```
@@ -365,7 +365,7 @@ chmod +x healthcheck.sh
 
 Agora sim, com todos os arquivos no lugar:
 
-```
+```text
 cd /home/lab09/projeto09
 
 # Derruba qualquer coisa antiga
@@ -380,7 +380,7 @@ docker compose up -d
 
 Verificando:
 
-```
+```text
 docker ps
 ```
 
@@ -400,7 +400,7 @@ Você deve ver:
 
 Ver o estado do cluster:
 
-```
+```text
 cd /home/lab09/projeto09
 ./automation/healthcheck.sh
 ```
@@ -414,7 +414,7 @@ Saída esperada:
 
 Depois de subir o ambiente com:
 
-```
+```text
 cd /home/lab09/projeto09
 docker compose up -d
 docker ps
@@ -424,7 +424,7 @@ validei o estado do cluster e as conexões usando apenas comandos dentro dos con
 
 ### Verificando o estado do cluster com Patroni
 
-```
+```text
 cd /home/lab09/projeto09
 
 docker exec projeto09-patroni1 patronictl list
@@ -438,7 +438,7 @@ Esse comando mostra quem é o líder, quem é réplica e o estado de cada nó.
 
 Para validar se o PostgreSQL do líder está aceitando conexões normalmente:
 
-```
+```text
 docker exec -it projeto09-patroni1 \\
   psql -U postgres -d postgres \\
   -c "SELECT inet_server_addr(), pg_is_in_recovery(), now();"
@@ -454,7 +454,7 @@ Aqui:
 
 Em vez de usar psql no host, eu também testei o fluxo passando pelo HAProxy, mas ainda de dentro do container:
 
-```
+```text
 docker exec -it projeto09-patroni1 \\
   psql -h projeto09-haproxy -p 5000 -U postgres -d postgres \\
   -c "SELECT inet_server_addr(), pg_is_in_recovery(), now();"
@@ -472,20 +472,20 @@ O inet_server_addr() passa a mostrar o IP do container que está atuando como l�
 
 Para validar o failover automático, derrubei o nó líder:
 
-```
+```text
 cd /home/lab09/projeto09
 docker stop projeto09-patroni1
 ```
 
 Em seguida, conferi o estado do cluster a partir do outro nó:
 
-```
+```text
 docker exec projeto09-patroni2 patronictl list
 ```![](image-30.png)
 
 E validei a conexão via HAProxy, ainda usando docker exec:
 
-```
+```text
 docker exec -it projeto09-patroni2 \\
   psql -h projeto09-haproxy -p 5000 -U postgres -d postgres \\
   -c "SELECT inet_server_addr(), pg_is_in_recovery(), now();"
@@ -502,19 +502,19 @@ Assim como já ensinei nos meus outros projetos, apenas relembrando, para acessa
 
 Prometheus:
 
-```
+```text
 http://SEU_HOST:9090
 ```
 
 Grafana:
 
-```
+```text
 http://SEU_HOST:3000
 ```
 
 Login padrão:
 
-```
+```text
 admin / admin
 ```
 

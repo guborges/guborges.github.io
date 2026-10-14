@@ -27,7 +27,7 @@ Considere uma tabela `CLIENTES` com 1.000.000 de registros.
 
 1. Uma consulta genérica:
 
-```
+```text
 SELECT * FROM CLIENTES;
 ```
 
@@ -36,7 +36,7 @@ SELECT * FROM CLIENTES;
 
 2. Uma consulta mais específica:
 
-```
+```text
 SELECT * FROM CLIENTES WHERE PAIS = 'BRASIL';
 ```
 
@@ -52,7 +52,7 @@ Se a selectivity indica a proporção filtrada, a **cardinality** mostra o núme
 
 A relação entre elas é direta:
 
-```
+```text
 cardinality = selectivity × número total de linhas
 ```
 
@@ -61,7 +61,7 @@ Imagine uma tabela `PEDIDOS` com 200.000 registros.
 
 1. Você executa a seguinte query:
 
-```
+```text
 SELECT * FROM PEDIDOS WHERE STATUS = 'ENTREGUE';
 ```
 
@@ -71,7 +71,7 @@ SELECT * FROM PEDIDOS WHERE STATUS = 'ENTREGUE';
 
 2. Agora um filtro mais restritivo:
 
-```
+```text
 SELECT * FROM PEDIDOS WHERE STATUS = 'ENTREGUE' AND VALOR > 5000;
 ```
 
