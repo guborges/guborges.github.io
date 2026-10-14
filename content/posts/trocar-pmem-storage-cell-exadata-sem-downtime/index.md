@@ -27,13 +27,13 @@ Um ponto que a doc oficial deixa claro e que muda o nível de risco: se o PMEM c
 
 O primeiro comando roda no próprio cell, como root, e mapeia os componentes físicos:
 
-```
+```text
 cellcli -e "list diskmap"
 ```
 
 No meio da saída, o módulo problemático aparece assim:
 
-```
+```text
 PMEM_0_12  8089-a2-2110-000025c7  "CPU: 0; DIMM: 12"  warning - predictive failure  127G  PM_01_stgcell03  /dev/dax0.0
 ```
 
@@ -43,13 +43,13 @@ PMEM_0_12  8089-a2-2110-000025c7  "CPU: 0; DIMM: 12"  warning - predictive failu
 
 Aqui está a diferença entre predictive failure e failed. Se o status fosse `critical`/`failed`, você poderia trocar de imediato. Em predictive failure, tem que esperar o Exadata liberar. Consulte o histórico de alertas daquele módulo:
 
-```
+```text
 cellcli -e "list alerthistory where metricObjectName='PMEM_0_12' detail"
 ```
 
 A saída traz dois eventos. O que libera a troca é o segundo:
 
-```
+```text
 alertMessage:  PMEM can be replaced now.
 alertAction:   The data on this PMEM module has been successfully flushed.
                Please replace the PMEM module. The cell needs to be shut
@@ -64,7 +64,7 @@ Este é o passo que separa uma manutenção tranquila de um incidente. Antes de 
 
 Vale conferir também o `failgroup_repair_time` dos disk groups, conectando na instância ASM num nó de banco:
 
-```
+```text
 SELECT dg.name AS diskgroup, a.name, a.value
 FROM   v$asm_diskgroup dg, v$asm_attribute a
 WHERE  dg.name IN ('DATA','RECO')
@@ -76,13 +76,13 @@ Se a janela for durar menos que o repair time (normalmente 24h numa configuraç�
 
 Agora o comando central, de volta no cell:
 
-```
+```text
 cellcli -e list griddisk attributes name,asmmodestatus,asmdeactivationoutcome
 ```
 
 O que você quer ver é `ONLINE` e `Yes` em todas as linhas:
 
-```
+```text
 DATA_CD_00_stgcell03   ONLINE   Yes
 DATA_CD_01_stgcell03   ONLINE   Yes
 ...
@@ -95,32 +95,32 @@ RECO_CD_11_stgcell03   ONLINE   Yes
 
 Com todas as linhas em `Yes`, inative os grid disks. Isso coloca os discos OFFLINE no ASM de forma controlada:
 
-```
+```text
 cellcli -e alter griddisk all inactive
 ``````
 GridDisk DATA_CD_00_stgcell03 successfully altered
 GridDisk DATA_CD_01_stgcell03 successfully altered
 ...
-```
+```text
 
 Confirme que a inativação segurou e que o `asmdeactivationoutcome` continua `Yes`:
 
 ```
 cellcli -e list griddisk attributes name,asmmodestatus,asmdeactivationoutcome
 cellcli -e list griddisk
-```
+```text
 
 Todas as linhas devem estar `OFFLINE`/`Yes` no primeiro comando e `inactive` no segundo. Só depois de confirmar isso o cell pode ser desligado:
 
 ```
 shutdown -h now
-```
+```text
 
 Um storage cell leva alguns minutos pra desligar por completo. Não assuma que a máquina caiu depois de dez segundos. Se tiver acesso ao ILOM, dá pra confirmar o estado real:
 
 ```
 show /System   ->   power_state = Off
-```
+```text
 
 Com o cell desligado e confirmado como off, o módulo pode ser trocado fisicamente.
 
@@ -142,7 +142,7 @@ Repare no serial: é diferente do que você anotou no passo 1, e o status agora 
 
 Reative os grid disks:
 
-```
+```text
 cellcli -e alter griddisk all active
 ```
 
@@ -150,7 +150,7 @@ A reativação começa em alguns minutos e cada disco entra em `SYNCING` antes d
 
 Pra acompanhar sem ficar rolando a tela, um loop simples:
 
-```
+```text
 while :; do clear; cellcli -e list griddisk attributes name,asmmodestatus; date; sleep 10; done
 ```
 
@@ -158,7 +158,7 @@ Os discos vão de `SYNCING` pra `ONLINE`. No meu run, o RECO terminou primeiro e
 
 Pra fechar, limpe os alertas e valide a configuração do cell:
 
-```
+```text
 cellcli -e drop alerthistory all
 cellcli -e alter cell validate configuration
 ```

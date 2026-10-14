@@ -44,7 +44,7 @@ Antes de trocar os papéis, eu quero ter certeza de três coisas:
 
 A partir de qualquer nó, conecto no DGMGRL e começo pelo básico:
 
-```
+```text
 SHOW CONFIGURATION;
 SHOW CONFIGURATION VERBOSE;
 SHOW CONFIGURATION LAG;
@@ -54,7 +54,7 @@ Esses três comandos já dizem muito. Se o lag não estiver zerado ou convergind
 
 Depois eu valido os dois lados individualmente:
 
-```
+```text
 VALIDATE DATABASE 'AUTO_U_BR';
 VALIDATE DATABASE 'AUTO_U_US';
 ```
@@ -65,7 +65,7 @@ Se o Broker disser que não está pronto para switchover, eu paro e resolvo o mo
 
 Outra coisa que eu sempre valido é se os bancos conseguem se enxergar corretamente pela rede, do jeito que o Broker espera.
 
-```
+```text
 VALIDATE NETWORK CONFIGURATION FOR ALL;
 ```
 
@@ -75,13 +75,13 @@ Esse comando evita surpresas depois, principalmente em ambientes RAC ou com múl
 
 Antes de trocar os papéis, eu confiro se o apply está ativo no standby. Se por algum motivo ele estiver pausado, eu não sigo.
 
-```
+```text
 SHOW DATABASE VERBOSE 'AUTO_U_US';
 ```
 
 Se precisar, eu ativo explicitamente pelo Broker:
 
-```
+```text
 EDIT DATABASE 'AUTO_U_US' SET STATE='APPLY-ON';
 ```
 
@@ -91,7 +91,7 @@ A regra aqui é simples: **sem apply consistente, sem switchover**.
 
 Com tudo validado, aí sim vem o comando mais simples de todo o processo.
 
-```
+```text
 SWITCHOVER TO 'AUTO_U_US';
 ```
 
@@ -103,7 +103,7 @@ Ele desmonta o primário atual, promove o standby, converte o antigo primário e
 
 Depois do switchover, eu não saio rodando comandos em sequência frenética. Eu dou alguns segundos e volto a validar.
 
-```
+```text
 SHOW CONFIGURATION;
 SHOW CONFIGURATION VERBOSE;
 SHOW CONFIGURATION LAG;
@@ -111,7 +111,7 @@ SHOW CONFIGURATION LAG;
 
 Depois olho cada banco:
 
-```
+```text
 SHOW DATABASE VERBOSE 'AUTO_U_US';
 SHOW DATABASE VERBOSE 'AUTO_U_BR';
 ```
@@ -126,7 +126,7 @@ Aqui eu quero ver:
 
 Além do Broker, eu sempre confiro direto no banco:
 
-```
+```text
 SELECT name, open_mode, database_role FROM v$database;
 ```
 
@@ -138,7 +138,7 @@ Switchover pode estar tecnicamente perfeito e ainda assim falhar do ponto de vis
 
 No lab eu faço um smoke test simples para garantir que o serviço está respondendo no novo primário:
 
-```
+```text
 sqlplus sh/oracle@srvora3:1521/AUTOUS_SVC
 ```
 
@@ -148,7 +148,7 @@ Em produção, aqui entra validação de service, SCAN, balanceamento e o que a 
 
 Como isso é um cenário planejado, nada impede de fazer o caminho inverso.
 
-```
+```text
 SWITCHOVER TO 'AUTO_U_BR';
 ```
 

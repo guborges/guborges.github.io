@@ -10,7 +10,7 @@ cover:
 
 Durante um backup RMAN executado **pelo standby**, o processo falhou com:
 
-```
+```text
 
 Oracle error from target database: 
 ORA-17629: Cannot connect to the remote database server
@@ -29,7 +29,7 @@ O ponto central é:
 **neste tipo específico de operação**, o standby precisa **acessar o primary** para fazer o `archive log current`.  
 E, nesse momento, a conexão via:
 
-```
+```text
 rman target /
 ```
 
@@ -41,7 +41,7 @@ Neste caso, o RMAN exigiu um connect identifier válido para alcançar o primary
 
 Conectar o RMAN usando usuário/senha + TNS:
 
-```
+```text
 rman target sys/senha
 ```
 

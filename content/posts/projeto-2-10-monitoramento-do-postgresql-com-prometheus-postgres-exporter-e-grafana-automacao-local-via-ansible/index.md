@@ -16,13 +16,13 @@ O resultado é um ambiente onde, com dois comandos, você instala Docker (caso n
 
 Diretório base:
 
-```
+```text
 <code>/home/lab02/project02</code>
 ```
 
 Criação da estrutura:
 
-```
+```text
 mkdir -p /home/lab02/project02/playbooks/templates
 mkdir -p /home/lab02/project02/vars
 cd /home/lab02/project02
@@ -30,7 +30,7 @@ cd /home/lab02/project02
 
 Estrutura final:
 
-```
+```text
 /home/lab02/project02/
 ├── inventory
 ├── vars/
@@ -54,7 +54,7 @@ Função de cada parte:
 
 # Inventory – conexão local
 
-```
+```text
 cat > /home/lab02/project02/inventory &lt;&lt; 'EOF'
 [dbservers]
 127.0.0.1 ansible_connection=local
@@ -67,7 +67,7 @@ EOF
 
 Crie:
 
-```
+```text
 cat > /home/lab02/project02/vars/monitoring.yml << 'EOF'
 prometheus_port: 9090
 grafana_port: 3000
@@ -89,7 +89,7 @@ Essas variáveis configuram:
 
 Crie:
 
-```
+```text
 cat > /home/lab02/project02/playbooks/templates/docker-compose-monitoring.yml.j2 << 'EOF'
 version: "3.9"
 
@@ -141,7 +141,7 @@ Esse compose sobe:
 
 Crie:
 
-```
+```text
 cat > /home/lab02/project02/playbooks/templates/prometheus.yml.j2 << 'EOF'
 global:
   scrape_interval: 5s
@@ -159,7 +159,7 @@ Isso diz ao Prometheus para coletar métricas do Exporter.
 
 Mesmo playbook do projeto 1. Criar:
 
-```
+```text
 cat > /home/lab02/project02/playbooks/install_docker.yml << 'EOF'
 - hosts: dbservers
   become: yes
@@ -196,7 +196,7 @@ cat > /home/lab02/project02/playbooks/install_docker.yml << 'EOF'
 
 # Playbook para deploy do monitoring
 
-```
+```text
 cat > /home/lab02/project02/playbooks/deploy_monitoring.yml << 'EOF'
 - hosts: dbservers
   become: yes
@@ -231,19 +231,19 @@ Esse playbook:
 
 Entre no diretório:
 
-```
+```text
 cd /home/lab02/project02
 ```
 
 ### Instalar Docker (caso ainda não exista)
 
-```
+```text
 ansible-playbook -i inventory playbooks/install_docker.yml
 ```
 
 ### Subir o stack de monitoramento
 
-```
+```text
 ansible-playbook -i inventory playbooks/deploy_monitoring.yml
 ```
 
@@ -251,13 +251,13 @@ ansible-playbook -i inventory playbooks/deploy_monitoring.yml
 
 ### Verificar se os containers estão rodando
 
-```
+```text
 docker ps
 ```
 
 Resultado esperado:
 
-```
+```text
 postgres_exporter
 prometheus
 grafana
@@ -267,7 +267,7 @@ grafana
 
 Acesse no navegador:
 
-```
+```text
 http://192.168.0.101:9090
 ```![](image-10-1024x297.png)
 
@@ -275,13 +275,13 @@ http://192.168.0.101:9090
 
 Acesse:
 
-```
+```text
 http://192.168.0.101:3000
 ```
 
 Login padrão:
 
-```
+```text
 admin / admin
 ```![](image-11-1024x644.png)
 
@@ -289,7 +289,7 @@ Após login, importe o dashboard padrão do postgres_exporter:
 
 ID no Grafana.com:
 
-```
+```text
 9628
 ```
 
@@ -307,7 +307,7 @@ Isso abrirá um dashboard completo com:
 
 ### Teste final: parar e restaurar
 
-```
+```text
 docker rm -f postgres_monitoring postgres_exporter prometheus grafana
 ansible-playbook -i inventory playbooks/deploy_monitoring.yml
 docker ps

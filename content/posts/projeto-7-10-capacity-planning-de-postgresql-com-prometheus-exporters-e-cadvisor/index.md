@@ -29,7 +29,7 @@ Tudo funciona apenas copiando e colando os comandos abaixo.
 
 Execute:
 
-```
+```text
 mkdir -p /home/lab07/projeto07/prometheus
 mkdir -p /home/lab07/projeto07/queries
 mkdir -p /home/lab07/projeto07/notebooks
@@ -37,7 +37,7 @@ mkdir -p /home/lab07/projeto07/notebooks
 
 Estrutura final:
 
-```
+```text
 /home/lab07/projeto07
 ├── docker-compose.yml
 ├── prometheus/
@@ -54,7 +54,7 @@ Estrutura final:
 
 # docker-compose.yml completo
 
-```
+```text
 cat << 'EOF' > /home/lab07/projeto07/docker-compose.yml
 version: '3.8'
 
@@ -122,7 +122,7 @@ EOF
 
 # Configuração do Prometheus
 
-```
+```text
 cat << 'EOF' > /home/lab07/projeto07/prometheus/prometheus.yml
 global:
   scrape_interval: 5s
@@ -148,7 +148,7 @@ EOF
 
 # Subindo o laboratório
 
-```
+```text
 cd /home/lab07/projeto07
 docker compose up -d
 docker ps
@@ -163,7 +163,7 @@ Acesse:
 
 ## CPU
 
-```
+```text
 cat << 'EOF' > /home/lab07/projeto07/queries/cpu.promql
 rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_service="postgres"}[5m])
 EOF
@@ -171,7 +171,7 @@ EOF
 
 ## Memória
 
-```
+```text
 cat << 'EOF' > /home/lab07/projeto07/queries/memory.promql
 container_memory_usage_bytes{container_label_com_docker_compose_service="postgres"}
 EOF
@@ -179,7 +179,7 @@ EOF
 
 ## Conexões simultâneas
 
-```
+```text
 cat << 'EOF' > /home/lab07/projeto07/queries/connections.promql
 pg_stat_activity_count
 EOF
@@ -187,7 +187,7 @@ EOF
 
 ## Tamanho do banco
 
-```
+```text
 cat << 'EOF' > /home/lab07/projeto07/queries/size.promql
 pg_database_size_bytes{datname="appdb"}
 EOF
@@ -205,7 +205,7 @@ No menu superior clique em **Query**.
 
 Digite:
 
-```
+```text
 up
 ```
 
@@ -217,7 +217,7 @@ Você deve ver:
 
 ## CPU do PostgreSQL
 
-```
+```text
 rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_service="postgres"}[5m])
 ```
 
@@ -228,26 +228,26 @@ rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_servic
 
 ## Memória do PostgreSQL
 
-```
+```text
 container_memory_usage_bytes{container_label_com_docker_compose_service="postgres"}
 ```![](image-22-1024x469.png)
 ![](image-26.png)
 
 ## Conexões simultâneas
 
-```
+```text
 pg_stat_activity_count
 ```![](image-23-1024x481.png)
 
 Você pode abrir várias sessões para ver o número subindo:
 
-```
+```text
 docker exec -it pg_primary psql -U admin -d appdb
 ```
 
 ## Tamanho do banco
 
-```
+```text
 pg_database_size_bytes{datname="appdb"}
 ```![](image-24-1024x486.png)
 
@@ -255,7 +255,7 @@ Com o tempo, você vê a linha crescendo no gráfico.
 
 Exemplo típico:
 
-```
+```text
 dia 1 → 12.3 GB
 dia 2 → 12.5 GB
 dia 3 → 12.9 GB
@@ -266,13 +266,13 @@ Crescimento médio: **+0,25 GB/dia**
 
 # Criando carga para deixar os gráficos bonitos
 
-```
+```text
 docker exec -it pg_primary psql -U admin -d appdb
 ```
 
 Dentro do SQL:
 
-```
+```text
 CREATE TABLE teste(id serial, nome text);
 INSERT INTO teste(nome)
 SELECT md5(random()::text)

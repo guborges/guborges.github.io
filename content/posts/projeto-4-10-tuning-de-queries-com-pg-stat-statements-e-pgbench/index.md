@@ -20,7 +20,7 @@ investigar, reproduzir, medir, corrigir e validar.
 
 Antes de começarmos a medir e comparar performance, precisamos de um ambiente isolado, limpo e fácil de reconstruir. Por isso estamos colocando tudo dentro de:
 
-```
+```text
 /home/lab04/projetos-dbengine/projeto04
 ```
 
@@ -35,7 +35,7 @@ Isso garante que você não afeta nenhum banco do seu sistema e pode repetir o l
 
 Crie o diretório principal do projeto:
 
-```
+```text
 mkdir -p /home/lab04/projetos-dbengine/projeto04
 cd /home/lab04/projetos-dbengine/projeto04
 ```
@@ -48,7 +48,7 @@ O arquivo abaixo sobe um PostgreSQL 16 já configurado com pg_stat_statements.
 
 Não precisa abrir editor: apenas copie e cole o comando completo.
 
-```
+```text
 cat << 'EOF' > /home/lab04/projetos-dbengine/projeto04/docker-compose.yml
 
 services:
@@ -83,7 +83,7 @@ sem isso, o pg_stat_statements não funciona.
 
 Criamos também a pasta onde os arquivos do banco serão armazenados:
 
-```
+```text
 mkdir -p /home/lab04/projetos-dbengine/projeto04/data
 ```
 
@@ -91,13 +91,13 @@ mkdir -p /home/lab04/projetos-dbengine/projeto04/data
 
 Agora subimos o contêiner:
 
-```
+```text
 docker compose -f /home/lab04/projetos-dbengine/projeto04/docker-compose.yml up -d
 ```
 
 E validamos se está ativo:
 
-```
+```text
 docker ps
 ```
 
@@ -107,25 +107,25 @@ Se pg_tuning estiver como **Up**, estamos prontos.
 
 Acesse o contêiner:
 
-```
+```text
 docker exec -it pg_tuning bash
 ```
 
 Entre no banco:
 
-```
+```text
 psql -U admin -d labdb
 ```
 
 Crie a extensão:
 
-```
+```text
 CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
 ```
 
 Confirme:
 
-```
+```text
 SELECT * FROM pg_extension WHERE extname = 'pg_stat_statements';
 ```
 
@@ -137,13 +137,13 @@ O pgbench será usado para gerar carga no banco. Assim evitamos testes artificia
 
 Saia do psql:
 
-```
+```text
 \q
 ```
 
 Execute:
 
-```
+```text
 pgbench -U admin -d labdb -i
 ```
 
@@ -155,13 +155,13 @@ Agora criaremos uma tabela propositalmente desindexada para simular lentidão.
 
 Entre novamente no psql:
 
-```
+```text
 psql -U admin -d labdb
 ```
 
 Crie a tabela:
 
-```
+```text
 CREATE TABLE vendas (
     id          bigserial PRIMARY KEY,
     cliente_id  integer,
@@ -173,7 +173,7 @@ CREATE TABLE vendas (
 
 Popule com 1 milhão de registros:
 
-```
+```text
 INSERT INTO vendas (cliente_id, data_venda, valor, status)
 SELECT
     (random() * 10000)::int,
@@ -189,7 +189,7 @@ FROM generate_series(1, 1000000);
 
 Confirme:
 
-```
+```text
 SELECT count(*) FROM vendas;
 ```
 
@@ -197,7 +197,7 @@ Se retornar 1.000.000, tudo certo.
 
 Saia:
 
-```
+```text
 \q
 ```
 
@@ -205,7 +205,7 @@ Saia:
 
 Aqui aquecemos o banco para gerar estatísticas reais.
 
-```
+```text
 pgbench -U admin -d labdb -c 10 -j 4 -T 60
 ```
 
@@ -215,13 +215,13 @@ Essa carga cria ruído saudável para o pg_stat_statements.
 
 Agora vamos simular uma query pesada. Entre no psql novamente:
 
-```
+```text
 psql -U admin -d labdb
 ```
 
 Execute algumas vezes:
 
-```
+```text
 SELECT *
 FROM vendas
 WHERE status = 'APROVADO'
@@ -231,7 +231,7 @@ WHERE status = 'APROVADO'
 
 E gere mais volume:
 
-```
+```text
 DO $$
 BEGIN
   FOR i IN 1..50 LOOP
@@ -247,7 +247,7 @@ $$;
 
 Saia:
 
-```
+```text
 \q
 ```
 
@@ -255,13 +255,13 @@ Saia:
 
 Entre novamente:
 
-```
+```text
 psql -U admin -d labdb
 ```
 
 Veja as queries que mais consumiram tempo:
 
-```
+```text
 SELECT
     queryid,
     calls,
@@ -279,7 +279,7 @@ LIMIT 10;
 
 Agora filtrar só monstros:
 
-```
+```text
 SELECT
     calls,
     round(total_exec_time::numeric, 2) AS total_exec_ms,
@@ -297,26 +297,26 @@ Anote o tempo médio por execução: usaremos daqui a pouco para comparar.
 
 Agora sim aplicamos uma otimização real: um índice composto.
 
-```
+```text
 CREATE INDEX idx_vendas_status_valor_data
     ON vendas (status, valor, data_venda);
 ```
 
 Atualize estatísticas:
 
-```
+```text
 ANALYZE vendas;
 ```
 
 Zere estatísticas do statements:
 
-```
+```text
 SELECT pg_stat_statements_reset();
 ```
 
 E gere a carga problemática novamente:
 
-```
+```text
 DO $$
 BEGIN
   FOR i IN 1..50 LOOP
@@ -332,7 +332,7 @@ $$;
 
 Consulte novamente:
 
-```
+```text
 SELECT
     calls,
     round(total_exec_time::numeric, 2) AS total_exec_ms,
@@ -347,7 +347,7 @@ LIMIT 10;
 
 E compare o plano:
 
-```
+```text
 EXPLAIN ANALYZE
 SELECT *
 FROM vendas
@@ -360,19 +360,19 @@ O ganho costuma ser alto, dependendo da distribuição dos dados.
 
 Saia:
 
-```
+```text
 \q
 ```
 
 ## Derrubando o ambiente
 
-```
+```text
 docker compose -f /home/lab04/projetos-dbengine/projeto04/docker-compose.yml down
 ```
 
 Para remover tudo:
 
-```
+```text
 rm -rf /home/lab04/projetos-dbengine/projeto04/data
 ```
 

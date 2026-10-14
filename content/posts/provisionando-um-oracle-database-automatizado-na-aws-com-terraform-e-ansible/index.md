@@ -17,7 +17,7 @@ Esse tipo de automação é o que diferencia um DBA tradicional de um **Database
 
 A estrutura base do repositório foi dividida em duas camadas:
 
-```
+```text
 projeto-oracle/
 ├── terraform/
 │   ├── main.tf
@@ -38,14 +38,14 @@ Essa chave será usada tanto pelo Terraform (para criar o recurso) quanto pelo A
 
 No Linux:
 
-```
+```text
 ssh-keygen -t rsa -b 4096
 ```
 
 Pressione **Enter** para aceitar os valores padrão.  
 Isso criará dois arquivos:
 
-```
+```text
 ~/.ssh/id_rsa        # chave privada
 ~/.ssh/id_rsa.pub    # chave pública
 ```
@@ -58,7 +58,7 @@ Dentro da pasta `terraform/`, os arquivos foram definidos da seguinte forma.
 
 ### **main.tf**
 
-```
+```text
 terraform {
   required_providers {
     aws = {
@@ -137,7 +137,7 @@ resource "aws_instance" "oracle_ec2" {
 
 ### **variables.tf**
 
-```
+```text
 variable "aws_region" {
   description = "Região AWS"
   default     = "sa-east-1"
@@ -164,7 +164,7 @@ variable "instance_type" {
 
 ### **outputs.tf**
 
-```
+```text
 output "ec2_public_ip" {
   description = "IP público da EC2"
   value       = aws_instance.oracle_ec2.public_ip
@@ -173,7 +173,7 @@ output "ec2_public_ip" {
 
 ### **Executando o Terraform**
 
-```
+```text
 cd terraform
 terraform init
 terraform apply
@@ -182,7 +182,7 @@ terraform apply
 Em poucos minutos, o Terraform cria a EC2, a chave SSH e o Security Group.  
 Ao final, o IP público da instância é exibido:
 
-```
+```text
 ec2_public_ip = "18.230.xxx.xxx"
 ```
 
@@ -194,7 +194,7 @@ Na pasta `ansible/`, o primeiro arquivo define o inventário:
 
 ### **inventory.ini**
 
-```
+```text
 [oracle]
 18.230.xxx.xxx ansible_user=ec2-user ansible_ssh_private_key_file=~/.ssh/id_rsa
 ```
@@ -209,7 +209,7 @@ Essa abordagem é prática, limpa e totalmente automatizável.
 
 ### **playbook-oracle.yml**
 
-```
+```text
 ---
 - name: Instalar Oracle XE via container
   hosts: oracle
@@ -239,7 +239,7 @@ Essa abordagem é prática, limpa e totalmente automatizável.
 
 ### **Executando o Ansible**
 
-```
+```text
 cd ansible
 ansible-playbook -i inventory.ini playbook-oracle.yml
 ```
@@ -252,7 +252,7 @@ Ao final, o Oracle XE estará rodando na porta 1521 e pronto para conexões exte
 Para testar a conexão, utilizei o **Oracle Instant Client** no meu ambiente local.  
 Depois de instalado, a conexão é feita via SQL*Plus:
 
-```
+```text
 sqlplus system/SenhaForte123@//18.230.xxx.xxx:1521/XEPDB1
 ```
 

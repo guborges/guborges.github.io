@@ -12,7 +12,7 @@ Resposta curta: sim, no 19c dá, usando DML Redirection no Active Data Guard. A 
 
 ## Meu ambiente de teste
 
-```
+```text
 Protection Mode: MaxPerformance
 Members:
   orcl   - Primary database
@@ -49,7 +49,7 @@ Não é para mover carga de escrita para o standby. O commit vai pagar a ida at�
 
 Opção sistema
 
-```
+```text
 ALTER SYSTEM SET ADG_REDIRECT_DML=TRUE;
 ```
 
@@ -59,7 +59,7 @@ Em RAC, você pode isolar por instância via serviços.
 
 1. Validar que o standby está aplicando redo em tempo real
 
-```
+```text
 -- Standby
 SELECT name, open_mode, database_role FROM v$database;
 -- Esperado: READ ONLY WITH APPLY | PHYSICAL STANDBY
@@ -67,7 +67,7 @@ SELECT name, open_mode, database_role FROM v$database;
 
 2. Habilitar o redirect e executar um DML no standby com um usuário de aplicação
 
-```
+```text
 -- Standby
 ALTER SYSTEM SET ADG_REDIRECT_DML=TRUE;
 
@@ -77,11 +77,11 @@ COMMIT;
 
 3. Conferir no primary
 
-```
+```text
 -- Primary
 SELECT * FROM testeadg;
 ```
-```
+```text
 -- Validação no standby
 
 SQL> select * from TESTEADG;
@@ -115,7 +115,7 @@ Esteja atento a estes dois pontos, porque me fizeram bater cabeça até entender
 1. Conexão como `sqlplus / as sysdba` no standby  
    No meu primeiro teste, conectei no standby com autenticação local do SO: `sqlplus / as sysdba`. O redirecionamento falhou com `ORA-16397`. Para funcionar, eu precisei conectar com usuário e senha via serviço TNS do standby. Exemplo:
 
-```
+```text
 -- Standby
 sqlplus sys@orcl as sysdba
 
@@ -133,7 +133,7 @@ Dica: para teste, use um usuário de aplicação. Evite objetos no esquema `SYS`
 
 Depois de ajustar a conexão e validar os pré-requisitos, a tabela `TESTEADG` apareceu no primary com os registros esperados:
 
-```
+```text
 ID
 --
 1

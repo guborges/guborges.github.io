@@ -46,7 +46,7 @@ Essa abordagem reduz risco, facilita troubleshooting e garante maior previsibili
 
 Exemplo conceitual do arquivo `.lst` utilizado em cada execução
 
-```
+```text
 /u02/dbnodes_cluster.lst
 dbnode01
 ```
@@ -73,7 +73,7 @@ Após o precheck no OCI, foi executado o **precheck técnico via patchmgr**, ago
 
 Comando utilizado
 
-```
+```text
 cd /u02/dbserver.patch.zip_exadata_ol8_25.2.3.0.0.251020_Linux-x86-64.zip/dbserver_patch_251214
 
 ./patchmgr \
@@ -119,7 +119,7 @@ Com o precheck aprovado, foi realizado o backup completo do DB Server antes do u
 
 Comando utilizado
 
-```
+```text
 cd /u02/dbserver.patch.zip_exadata_ol8_25.2.3.0.0.251020_Linux-x86-64.zip/dbserver_patch_251214
 
 ./patchmgr \
@@ -140,7 +140,7 @@ Após precheck e backup concluídos com sucesso, foi executado o upgrade definit
 
 Comando utilizado
 
-```
+```text
 cd /u02/dbserver.patch.zip_exadata_ol8_25.2.3.0.0.251020_Linux-x86-64.zip/dbserver_patch_251214
 
 ./patchmgr \
@@ -184,7 +184,7 @@ Após a conclusão do upgrade, foi realizada a validação final com o comando `
 Saída real pós atualização  
 Dados sensíveis anonimizados
 
-```
+```text
 [root@dbnode01 ~]# imageinfo
 
 Kernel version: 5.15.0-308.179.6.16.el8uek.x86_64 #2 SMP Thu Sep 18 11:19:34 PDT 2025 x86_64

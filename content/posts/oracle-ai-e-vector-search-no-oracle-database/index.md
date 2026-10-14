@@ -44,7 +44,7 @@ Ele não substitui modelagem relacional, nem índice tradicional, nem tuning cl�
 
 Exemplo simples:
 
-```
+```text
 CREATE TABLE artigos (
     id         NUMBER PRIMARY KEY,
     titulo     VARCHAR2(200),
@@ -84,14 +84,14 @@ Supondo que o arquivo do modelo esteja no servidor do banco, por exemplo:
 
 Primeiro criamos um diretório lógico no Oracle apontando para esse caminho:
 
-```
+```text
 CREATE OR REPLACE DIRECTORY ONNX_DIR AS '/u01/models';
 GRANT READ, WRITE ON DIRECTORY ONNX_DIR TO gustavo;
 ```
 
 Agora importamos o modelo para dentro do banco:
 
-```
+```text
 
 BEGIN
   DBMS_VECTOR.LOAD_ONNX_MODEL(
@@ -107,7 +107,7 @@ END;
 
 Após a importação, é possível validar se o modelo foi registrado:
 
-```
+```text
 SELECT model_name,
        mining_function,
        algorithm,
@@ -119,7 +119,7 @@ Com o modelo carregado, ele passa a ser um objeto gerenciado dentro do banco.
 
 A geração de embedding pode ser feita diretamente via SQL, por exemplo:
 
-```
+```text
 SELECT VECTOR_EMBEDDING(
          EMBEDDING_MODEL
          USING 'Texto para gerar embedding' AS INPUT
@@ -140,7 +140,7 @@ Pontos importantes:
 
 Uma consulta típica pode ser assim:
 
-```
+```text
 SELECT id,
        titulo,
        VECTOR_DISTANCE(
@@ -171,7 +171,7 @@ Isso precisa ser tratado como qualquer outro índice crítico em produção, con
 
 Para sair da teoria, imagine uma base de conhecimento interna com artigos técnicos.
 
-```
+```text
 CREATE TABLE artigos (
     id         NUMBER PRIMARY KEY,
     titulo     VARCHAR2(200),
@@ -182,7 +182,7 @@ CREATE TABLE artigos (
 
 Inserindo um registro:
 
-```
+```text
 INSERT INTO artigos (id, titulo, conteudo, embedding)
 VALUES (
     1,
@@ -197,7 +197,7 @@ VALUES (
 
 Após gerar o embedding com o modelo importado:
 
-```
+```text
 UPDATE artigos
 SET embedding = VECTOR_EMBEDDING(
                   EMBEDDING_MODEL
@@ -208,7 +208,7 @@ WHERE id = 1;
 
 Criando índice vetorial:
 
-```
+```text
 CREATE VECTOR INDEX idx_artigos_embedding
 ON artigos (embedding)
 ORGANIZATION NEIGHBOR PARTITIONS
@@ -217,7 +217,7 @@ DISTANCE COSINE;
 
 Consultando por similaridade:
 
-```
+```text
 SELECT id,
        titulo,
        VECTOR_DISTANCE(

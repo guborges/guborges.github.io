@@ -38,7 +38,7 @@ Uma confusão comum: o DBWn nao tem nada a ver com a durabilidade do commit. Que
 
 A partir do 12c, o LGWR pode delegar a escrita fisica para workers auxiliares (LG00, LG01, etc.). Eles gravam o redo no disco e postam as sessoes de volta.
 
-```
+```text
 $ ps -ef | grep ora_lg
 oracle  14346     1  0 11:10 ?  00:00:00 ora_lgwr_mydb
 oracle  14350     1  0 11:10 ?  00:00:00 ora_lg00_mydb
@@ -53,7 +53,7 @@ O parametro `_use_single_log_writer` controla isso:
 
 O LGWR trace registra as transicoes:
 
-```
+```text
 kcrfw_slave_adaptive_updatemode: scalable->single group0=375 all=384 delay=144
 Adaptive scalable LGWR disabling workers
 ```
@@ -77,7 +77,7 @@ Se o gargalo esta na etapa 3, o problema é I/O. Se está nas etapas 5 e 6, o pr
 
 ### Comparar log file sync com log file parallel write
 
-```
+```text
 SELECT event,
        total_waits,
        ROUND(time_waited_micro/1000) AS total_ms,
@@ -91,7 +91,7 @@ Se o avg_wait_ms de "log file parallel write" esta proximo do "log file sync", o
 
 ### Verificar taxa de commits
 
-```
+```text
 SELECT name, value
 FROM   v$sysstat
 WHERE  name IN ('user commits',
@@ -108,7 +108,7 @@ Outro indicador: se redo wastage esta alto em relacao ao redo size, os commits s
 
 ### Verificar o que o LGWR esta fazendo agora
 
-```
+```text
 SELECT sid,
        event,
        state,
@@ -124,7 +124,7 @@ Se o LGWR esta em "log file parallel write", está esperando I/O. Se esta em "rd
 
 O LGWR registra automaticamente escritas acima de 500ms:
 
-```
+```text
 $ grep "Warning: log write" $ORACLE_BASE/diag/rdbms/$DB_NAME/$INSTANCE/trace/*lgwr*.trc
 
 Warning: log write elapsed time 608ms, size 23848KB
@@ -142,7 +142,7 @@ Nao colocar redo em RAID-5 ou RAID-6. A penalidade de escrita com paridade causa
 
 Verificar o filesystemio_options:
 
-```
+```text
 SHOW PARAMETER filesystemio_options;
 ```
 
@@ -158,7 +158,7 @@ A correção certa e na aplicação: agrupar operações e comitar em batch. Em 
 
 Se a aplicação não pode ser alterada e perder dados em caso de crash e tolerável:
 
-```
+```text
 ALTER SESSION SET COMMIT_WAIT = NOWAIT;<br>ALTER SESSION SET COMMIT_LOGGING = BATCH;
 ```
 
@@ -172,7 +172,7 @@ Um detalhe que a documentação nao deixa claro mas que foi confirmado por Frits
 
 Se o LGWR não consegue CPU, ele atrasa para gravar e para postar as sessões de volta. Verifique:
 
-```
+```text
 $ vmstat 5 10
 ```
 
@@ -180,13 +180,13 @@ Se a coluna `r` (run queue) esta consistentemente acima do numero de CPUs, ha co
 
 No 19c, o LGWR roda com prioridade normal (SCHED_OTHER) por padrao. A partir do 21c, ele ja vem incluso no `_high_priority_processes`. No 19c, você pode adicionar:
 
-```
+```text
 ALTER SYSTEM SET "_high_priority_processes"='LMS*|VKTM|LGWR' SCOPE=SPFILE;
 ```
 
 Requer restart. Depois, confirme:
 
-```
+```text
 $ ps -eo pid,class,pri,nice,args | grep ora_lgwr<br>26058 RR  41    - ora_lgwr_mydb
 ```
 
@@ -198,7 +198,7 @@ Esse parametro e oculto. Consulte o Oracle Support antes (MOS Doc ID 1373500.1).
 
 Depois de qualquer mudança, valide com um AWR de pelo menos 30 minutos em horario de pico:
 
-```
+```text
 SELECT snap_id,
        event_name,
        ROUND(time_waited_micro/total_waits/1000, 2) AS avg_ms
@@ -218,7 +218,7 @@ Sessoes esperando nesse evento. O LGWR precisa trocar de redo log group, mas o D
 
 Causa mais comum: redo log groups pequenos demais. A recomendacao e ter switches a cada 15-20 minutos.
 
-```
+```text
 SELECT ROUND(24*60/COUNT(*)) AS mins_entre_switches
 FROM   v$log_history
 WHERE  first_time > SYSDATE - 1;

@@ -50,7 +50,7 @@ Antes de apertar qualquer botão, três checks são obrigatórios.
 
 **Check 1: o backup full anterior ainda existe?**
 
-```
+```text
 -- Lista os fulls disponíveis no controlfile/catalog
 RMAN> LIST BACKUP OF DATABASE SUMMARY;
 ```
@@ -59,13 +59,13 @@ Se a retention policy é `REDUNDANCY 1` ou foi rodado `DELETE OBSOLETE` depois d
 
 Em retention por `RECOVERY WINDOW OF N DAYS`, o Oracle mantém o backup necessário para qualquer PITR dentro da janela. Essa é a configuração segura para esse cenário.
 
-```
+```text
 RMAN> SHOW RETENTION POLICY;
 ```
 
 **Check 2: os archivelogs entre o full antigo e o target existem?**
 
-```
+```text
 -- Lista archivelogs pelo range de SCN ou tempo
 RMAN> LIST ARCHIVELOG FROM TIME "to_date('SEX_02_DEZ_00:00:00','DY_DD_MON_HH24:MI:SS')" UNTIL TIME "to_date('SEX_09_DEZ_14:00:00','DY_DD_MON_HH24:MI:SS')";
 ```
@@ -76,7 +76,7 @@ Qualquer gap aqui mata a recuperação. O redo tem que estar contínuo desde o c
 
 Antes de tocar no banco, previsualize o que o RMAN vai fazer:
 
-```
+```text
 RMAN> RUN {
   SET UNTIL TIME "to_date('09-DEC-2024 13:30:00','DD-MON-YYYY HH24:MI:SS')";
     RESTORE DATABASE PREVIEW;
@@ -91,7 +91,7 @@ Fluxo completo do DBPITR para o cenário sexta às 13h30.
 
 ### Passo 1: shutdown e startup em mount
 
-```
+```text
 SQL> SHUTDOWN IMMEDIATE;
 SQL> STARTUP MOUNT;
 ```
@@ -100,7 +100,7 @@ O DBPITR exige o banco montado. Os datafiles vão ser sobrescritos e o banco nã
 
 ### Passo 2: ajustar NLS_DATE_FORMAT na sessão
 
-```
+```text
 $ export NLS_DATE_FORMAT="DD-MON-YYYY HH24:MI:SS"
 $ rman target /
 ```
@@ -111,13 +111,13 @@ Isso evita ambiguidade no `SET UNTIL TIME`. Sem isso, o RMAN pode interpretar a 
 
 Se houve algum RESETLOGS recente (por outro PITR anterior, por exemplo), o target pode estar em uma incarnation parent:
 
-```
+```text
 RMAN> LIST INCARNATION;
 ```
 
 Se o target time está **antes** de uma `RESETLOGS` existente, é preciso fazer reset para a incarnation correta:
 
-```
+```text
 RMAN> RESET DATABASE TO INCARNATION <numero>;
 ```
 
@@ -125,7 +125,7 @@ No nosso cenário simples, sem RESETLOGS prévio, esse passo não é necessário
 
 ### Passo 4: executar o restore e recover
 
-```
+```text
 RMAN> RUN {
   SET UNTIL TIME "to_date('09-DEC-2024 13:30:00','DD-MON-YYYY HH24:MI:SS')";
   RESTORE DATABASE;
@@ -145,7 +145,7 @@ O que acontece por baixo:
 
 ### Passo 5: abrir com RESETLOGS
 
-```
+```text
 RMAN> ALTER DATABASE OPEN RESETLOGS;
 ```
 
@@ -157,7 +157,7 @@ Três validações rápidas pra confirmar que o PITR funcionou.
 
 **Validar o tempo/SCN de abertura:**
 
-```
+```text
 SQL> SELECT RESETLOGS_TIME, RESETLOGS_CHANGE# FROM V$DATABASE;
 ```
 
@@ -165,7 +165,7 @@ O RESETLOGS_TIME deve bater com o momento em que você abriu o banco. O RESETLOG
 
 **Validar a nova incarnation:**
 
-```
+```text
 RMAN> LIST INCARNATION OF DATABASE;
 ```
 
@@ -175,7 +175,7 @@ A CURRENT deve ser a que acabou de ser criada. A anterior aparece como PARENT.
 
 Antes do `RESETLOGS`, se você quiser confirmar que o PITR chegou no ponto certo:
 
-```
+```text
 SQL> ALTER DATABASE OPEN READ ONLY;
 ```
 
@@ -191,7 +191,7 @@ Abre em read-only, permite query nas tabelas de negócio pra confirmar que a atu
 
 **Solução:** catalogar archivelogs que estejam em disco mas fora do catálogo:
 
-```
+```text
 RMAN> CATALOG START WITH '/caminho/dos/archivelogs/';
 ```
 
@@ -228,7 +228,7 @@ Depois do incidente, revisar a retention policy. `RECOVERY WINDOW OF N DAYS` com
 
 **Solução:**
 
-```
+```text
 RMAN> LIST INCARNATION;
 RMAN> RESET DATABASE TO INCARNATION &lt;numero_da_parent>;
 ```

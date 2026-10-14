@@ -14,7 +14,7 @@ Elas também ajudam a reduzir o *hard parsing*, melhoram a utilização do *shar
 
 Um exemplo simples deixa isso claro:
 
-```
+```text
 -- sem variável de bind
 SELECT * FROM clientes WHERE id = 10;
 
@@ -40,7 +40,7 @@ Vamos simular um cenário simples para entender como funcionam e por que são t�
 
 1. Criar uma tabela de teste:
 
-```
+```text
 DROP TABLE clientes PURGE;
 
 CREATE TABLE clientes (
@@ -51,7 +51,7 @@ CREATE TABLE clientes (
 
 2. Popular a tabela com dados:
 
-```
+```text
 BEGIN
   FOR i IN 1..100000 LOOP
     INSERT INTO clientes VALUES (i, 'Cliente ' || i);
@@ -63,7 +63,7 @@ END;
 
 3. Consultar **sem variáveis de bind**:
 
-```
+```text
 SELECT * FROM clientes WHERE id = 1000;
 SELECT * FROM clientes WHERE id = 2000;
 SELECT * FROM clientes WHERE id = 3000;
@@ -71,7 +71,7 @@ SELECT * FROM clientes WHERE id = 3000;
 
 O Oracle tratará cada uma dessas queries como uma instrução diferente, pois o texto muda a cada execução:
 
-```
+```text
 SELECT sql_text, executions, parse_calls
 FROM v$sql
 WHERE sql_text LIKE 'SELECT * FROM clientes WHERE id =%';
@@ -82,7 +82,7 @@ Você provavelmente verá **três entradas separadas**, cada uma com seu própri
 
 4. Consultar **com variáveis de bind**:
 
-```
+```text
 VARIABLE v_id NUMBER
 
 EXEC :v_id := 1000
@@ -97,7 +97,7 @@ SELECT * FROM clientes WHERE id = :v_id;
 
 Agora, mesmo com valores diferentes, o Oracle reconhece a query como a mesma instrução e **reutiliza o plano de execução**:
 
-```
+```text
 SELECT sql_text, executions, parse_calls
 FROM v$sql
 WHERE sql_text LIKE 'SELECT * FROM clientes WHERE id =%';

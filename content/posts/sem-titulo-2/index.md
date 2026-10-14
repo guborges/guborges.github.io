@@ -41,7 +41,7 @@ Execute a query abaixo diretamente no FreeSQL para ver o banner da versão 26ai:
 
 Antes de qualquer análise em um ambiente Data Guard, o primeiro passo é confirmar se estamos conectados ao **PRIMARY** ou ao **STANDBY**, e qual é o modo de operação atual.
 
-```
+```text
 SELECT
     name                    AS db_name,
     db_unique_name          AS db_unique_name,
@@ -77,7 +77,7 @@ O que observar
 
 A métrica mais crítica em Data Guard é o **apply lag** — o atraso entre o que foi gerado no primary e o que foi aplicado no standby. O **transport lag** indica o atraso no envio dos redo logs.
 
-```
+```text
 SELECT
     name,
     value,
@@ -114,7 +114,7 @@ Interpretação
 
 No 26ai, `V$DATAGUARD_PROCESS` é a view recomendada para verificar todos os processos envolvidos na replicação, substituindo parte do uso da antiga `V$MANAGED_STANDBY`.
 
-```
+```text
 SELECT
     pid,
     name,
@@ -152,7 +152,7 @@ Processos-chave
 
 O transporte de redo é o elo crítico entre primary e standby. Problemas aqui significam standby desatualizado.
 
-```
+```text
 SELECT
     dest_id,
     dest_name,
@@ -183,7 +183,7 @@ https://freesql.com/embedded/?layout=vertical&compressed_code=H4sIAFv+qmkC/wt29X
 
 Para verificar quais logs foram recebidos e aplicados no standby, identificando possíveis lacunas:
 
-```
+```text
 SELECT
     thread#,
     MAX(sequence#) AS last_seq_received,
@@ -212,7 +212,7 @@ Interpretação
 
 Quando há falha no transporte de redo, podem surgir gaps (lacunas) nos archive logs do standby:
 
-```
+```text
 SELECT
     thread#,
     low_sequence#,
@@ -230,7 +230,7 @@ Se retornar linhas, existem logs faltando no standby. Ações corretivas: (1) ve
 
 No Oracle 26ai, `V$DG_BROKER_CONFIG` foi expandida com colunas essenciais que antes só estavam disponíveis via DGMGRL:
 
-```
+```text
 SELECT
     database,
     dataguard_role,
@@ -263,7 +263,7 @@ Antes do 26ai, para saber se um standby estava `SWITCHOVER_READY` ou `FAILOVER_R
 
 Nova view no 26ai que expõe **todas as propriedades do Broker** diretamente via SQL — sem necessidade do DGMGRL:
 
-```
+```text
 SELECT
     member,
     dataguard_role,
@@ -309,7 +309,7 @@ Auditoria de configuração automatizada via SQL, comparação entre membros da 
 
 Nova view que armazena o histórico dos últimos **10 role changes** (switchovers e failovers) da configuração:
 
-```
+```text
 SELECT
     event,
     old_primary,
@@ -342,7 +342,7 @@ Rastreabilidade completa de quem era primary e quando houve mudança de papel. E
 
 O Data Guard Broker CLI (DGMGRL) agora suporta saída em formato **JSON**, facilitando integração com ferramentas de automação como Ansible, Terraform e pipelines CI/CD:
 
-```
+```text
 # Na linha de comando do sistema operacional:
 $ dgmgrl -outputformat json sys/password@cdb1 "SHOW CONFIGURATION"
 
@@ -358,7 +358,7 @@ Isso elimina a necessidade de parsear texto livre com regex frágeis. Agora é p
 
 O 26ai introduziu o comando `PREPARE DATABASE FOR DATA GUARD` no Broker, que automatiza a preparação do primary para criação do standby:
 
-```
+```text
 DGMGRL> PREPARE DATABASE FOR DATA GUARD
         WITH DB_UNIQUE_NAME IS cdb1_stby
         DB_RECOVERY_FILE_DEST IS "+FRA"
@@ -373,7 +373,7 @@ Esse comando configura automaticamente: archivelog mode, force logging, standby 
 
 No 26ai, os snapshots AWR no standby são coletados automaticamente e transportados para o primary — sem necessidade de configuração manual do RMF (Remote Management Framework). Os snapshots são coletados a cada hora com retenção de 8 dias.
 
-```
+```text
 -- Verificar snapshots AWR no standby
 SELECT
     snap_id,

@@ -32,13 +32,13 @@ Arquitetura do ambiente
 
 Todo o projeto fica em:
 
-```
+```text
 /home/lab05/projetos-dbengine/projeto05
 ```
 
 Estrutura de diretórios:
 
-```
+```text
 projeto05/
 ├── primary/
 │   ├── docker-compose.yml
@@ -59,7 +59,7 @@ Criando diretórios e rede Docker
 
 Crie a estrutura do projeto e a rede:
 
-```
+```text
 mkdir -p /home/lab05/projetos-dbengine/projeto05
 cd /home/lab05/projetos-dbengine/projeto05
 
@@ -82,7 +82,7 @@ O primary precisa:
 
 Arquivo primary/docker-compose.yml
 
-```
+```text
 cat << 'EOF' > primary/docker-compose.yml
 services:
   pg_primary:
@@ -137,7 +137,7 @@ Esse script:
 - Cria uma tabela de teste
 - Insere uma linha inicial para validar replicação depois
 
-```
+```text
 cat << 'EOF' > primary/init.sql
 CREATE ROLE replicator WITH REPLICATION LOGIN PASSWORD 'replica123';
 
@@ -152,20 +152,20 @@ EOF
 
 Subindo o Primary
 
-```
+```text
 cd /home/lab05/projetos-dbengine/projeto05/primary
 docker compose up -d
 ```
 
 Verifique se está rodando:
 
-```
+```text
 docker ps | grep pg_primary
 ```
 
 Teste rápido de conexão (usando psql dentro do container):
 
-```
+```text
 docker exec -it pg_primary \\
   psql -U admin -d appdb -c "SELECT version();"
 ```
@@ -176,7 +176,7 @@ Agora vamos criar uma cópia física do cluster do primary para usar como diret�
 
 Esse comando roda dentro do pg_primary e grava o base backup em /basebackup/replica_data (que é mapeado para o host em basebackup/replica_data):
 
-```
+```text
 docker exec -it pg_primary \\
   pg_basebackup \\
     -D /basebackup/replica_data \\
@@ -199,7 +199,7 @@ O que cada opção faz:
 
 Do lado do host, você pode inspecionar:
 
-```
+```text
 ls -R /home/lab05/projetos-dbengine/projeto05/basebackup
 ```
 
@@ -209,7 +209,7 @@ O -R ajuda, mas a linha gerada de primary_conninfo pode não estar com o host e 
 
 Exiba a linha atual:
 
-```
+```text
 cd /home/lab05/projetos-dbengine/projeto05
 
 grep primary_conninfo basebackup/replica_data/postgresql.auto.conf
@@ -217,19 +217,19 @@ grep primary_conninfo basebackup/replica_data/postgresql.auto.conf
 
 Agora sobrescreva para uma versão explícita apontando para o hostname pg_primary:
 
-```
+```text
 sed -i "s/^primary_conninfo.*/primary_conninfo = 'host=pg_primary port=5432 user=replicator password=replica123'/" basebackup/replica_data/postgresql.auto.conf
 ```
 
 E confira:
 
-```
+```text
 grep primary_conninfo basebackup/replica_data/postgresql.auto.conf
 ```
 
 Deve aparecer:
 
-```
+```text
 primary_conninfo = 'host=pg_primary port=5432 user=replicator password=replica123'
 ```
 
@@ -241,7 +241,7 @@ Agora sim, com o base backup preparado e o primary_conninfo corrigido, vamos con
 
 Arquivo replica/docker-compose.yml
 
-```
+```text
 cat << 'EOF' > replica/docker-compose.yml
 services:
   pg_replica:
@@ -271,20 +271,20 @@ Aqui:
 
 Subindo a Replica
 
-```
+```text
 cd /home/lab05/projetos-dbengine/projeto05/replica
 docker compose up -d
 ```
 
 Verifique:
 
-```
+```text
 docker ps | grep pg_replica
 ```
 
 Confirme se está em recovery:
 
-```
+```text
 docker exec -it pg_replica \\
   psql -U admin -d appdb -c "SELECT pg_is_in_recovery();"
 ```
@@ -297,7 +297,7 @@ Agora falta dizer para o primary que o usuário replicator pode se conectar para
 
 Primeiro, descubra o PGDATA no primary:
 
-```
+```text
 docker exec -it pg_primary bash -c 'echo $PGDATA'
 ```
 
@@ -305,19 +305,19 @@ Geralmente será /var/lib/postgresql/data.
 
 Adicione uma linha liberando replicação de qualquer IP (ambiente de laboratório):
 
-```
+```text
 docker exec -it pg_primary bash -c "echo \\"host    replication     replicator      0.0.0.0/0       trust\\" >> \\$PGDATA/pg_hba.conf"
 ```
 
 Confirme no final do arquivo:
 
-```
+```text
 docker exec -it pg_primary bash -c "tail -n 5 \\$PGDATA/pg_hba.conf"
 ```
 
 Recarregue a configuração:
 
-```
+```text
 docker exec -it pg_primary \\
   psql -U admin -d appdb -c "SELECT pg_reload_conf();"
 ```
@@ -328,14 +328,14 @@ Verificando o wal receiver na Replica
 
 Verifique se o processo responsável por receber WAL está ativo no standby:
 
-```
+```text
 docker exec -it pg_replica \\
   psql -U admin -d appdb -c "SELECT status, conninfo FROM pg_stat_wal_receiver;"
 ```
 
 Saída esperada (como você já viu):
 
-```
+```text
  status   | conninfo
 ----------+------------------------------------------------------------------
  streaming | user=replicator ... host=pg_primary port=5432 ...
@@ -347,7 +347,7 @@ Verificando sessões de replicação no Primary
 
 No primary, veja se ele enxerga a réplica como cliente de replicação:
 
-```
+```text
 docker exec -it pg_primary \\
   psql -U admin -d appdb -c "
 SELECT pid,
@@ -373,28 +373,28 @@ Agora vamos validar que as alterações no primary chegam na réplica.
 
 Inserindo dados no primary
 
-```
+```text
 docker exec -it pg_primary \\
   psql -U admin -d appdb -c "INSERT INTO teste VALUES (2, 'linha replicada para o standby');"
 ```
 
 E mais uma linha:
 
-```
+```text
 docker exec -it pg_primary \\
   psql -U admin -d appdb -c "INSERT INTO teste VALUES (3, 'teste depois de configurar pg_hba.conf');"
 ```
 
 Consultando na réplica
 
-```
+```text
 docker exec -it pg_replica \\
   psql -U admin -d appdb -c "SELECT * FROM teste ORDER BY id;"
 ```
 
 Saída esperada:
 
-```
+```text
  id |                           txt
 ----+-------------------------------------------------
   1 | linha inicial no primary
@@ -412,20 +412,20 @@ Importante: dentro do container, o Postgres roda como usuário postgres, então 
 
 Comando de promoção
 
-```
+```text
 docker exec -u postgres pg_replica pg_ctl -D /var/lib/postgresql/data promote
 ```
 
 Verificando o estado após promoção
 
-```
+```text
 docker exec -it pg_replica \\
   psql -U admin -d appdb -c "SELECT pg_is_in_recovery();"
 ```
 
 Esperado:
 
-```
+```text
 f
 ```
 

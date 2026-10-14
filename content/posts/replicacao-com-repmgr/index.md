@@ -84,7 +84,7 @@ Acesse o arquivo em /var/lib/pgsql/13/data/pg_hba.conf
 
 adicione a seguinte linha de configuração
 
-```
+```text
 host    repmgr          repmgr          0.0.0.0/0               trust
 host    replication     repmgr          <ip_replica>/32         trust
 ```

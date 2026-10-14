@@ -44,7 +44,7 @@ O Claude resolve o problema do contexto. Com os Projects do Claude, eu configuro
 
 A organização do vault segue um princípio simples: se eu preciso encontrar algo rápido, a estrutura precisa refletir isso.
 
-```
+```text
 DBA-Vault/
 ├── 00-Dashboard/
 │   └── dashboard.md
@@ -98,7 +98,7 @@ Os runbooks seguem formato padronizado: pré-requisitos, passos com comandos rea
 
 O plugin Dataview do Obsidian transforma o vault numa base de dados consultável, mas só funciona se os metadados estiverem corretos. Cada tipo de nota tem um template com frontmatter YAML:
 
-```
+```text
 ---
 tipo: incidente
 data: {{date}}
@@ -124,7 +124,7 @@ FROM   v$sql
 WHERE  cpu_time > 1e9
 ORDER  BY cpu_time DESC
 FETCH FIRST 10 ROWS ONLY;
-```
+```text
 
 ASH confirmou contenção de PX flow control em ambos os nós.
 Plano de execução mudou após coleta de estatísticas na noite anterior.
@@ -140,7 +140,7 @@ SQL Profile criado para estabilizar o plano anterior.
 SELECT plan_hash_value, executions, elapsed_time/executions avg_elapsed
 FROM   v$sql
 WHERE  sql_id = 'abc123def';
-```
+```text
 
 CPU normalizou em 15 minutos. Alerta fechado.
 
@@ -151,7 +151,7 @@ Considerar SQL Plan Baselines para os top 10 SQL do ambiente.
 
 Com essa estrutura, uma query Dataview no dashboard retorna todos os incidentes de severidade alta, ou todos os incidentes de um ambiente específico, ou tudo que aconteceu no último mês:
 
-```
+```text
 TABLE ambiente, severidade, causa_raiz
 FROM "03-Incidentes"
 WHERE tipo = "incidente" AND severidade = "alta"
@@ -166,7 +166,7 @@ Os Projects do Claude resolvem isso. Cada projeto mantém instruções persisten
 
 A estrutura que uso:
 
-```
+```text
 Projeto: Oracle Operations
 ├── Instruções customizadas:
 │   - Ambiente padrão: Oracle 19c em Exadata
@@ -205,7 +205,7 @@ Vou mostrar como os componentes se conectam num cenário real.
 
 **Passo 2 - Claude:** no projeto Oracle Operations, abro conversa nova e colo os dados do diagnóstico:
 
-```
+```text
 Top SQL por CPU:
 SQL_ID: abc123def - 45% DB Time - Full Table Scan em tabela grande
 SQL_ID: xyz789ghi - 28% DB Time - PX flow control waits
@@ -227,7 +227,7 @@ Existe a possibilidade de eliminar a etapa manual de copiar Markdown via MCP (Mo
 
 A configuração envolve o plugin Local REST API no Obsidian e um MCP server:
 
-```
+```text
 {
   "mcpServers": {
     "obsidian": {

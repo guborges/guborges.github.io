@@ -58,13 +58,13 @@ Esse é o modo padrão do Oracle e faz bastante sentido para cargas analíticas,
 
 Para saber qual é o comportamento padrão configurado no banco, basta consultar o parâmetro:
 
-```
+```text
 SHOW PARAMETER optimizer_mode
 ```
 
 Ou, se preferir via dicionário:
 
-```
+```text
 SELECT value
 FROM v$parameter
 WHERE name = 'optimizer_mode';
@@ -78,21 +78,21 @@ O Oracle permite influenciar o otimizador diretamente na query usando hints.
 
 Para priorizar eficiência total da execução:
 
-```
+```text
 SELECT /*+ ALL_ROWS */ col1, col2
 FROM tabela_exemplo;
 ```
 
 Para priorizar resposta rápida inicial:
 
-```
+```text
 SELECT /*+ FIRST_ROWS */ col1, col2
 FROM tabela_exemplo;
 ```
 
 Quando o número de linhas é conhecido e relevante:
 
-```
+```text
 SELECT /*+ FIRST_ROWS(50) */ col1, col2
 FROM tabela_exemplo;
 ```
@@ -103,7 +103,7 @@ Esse tipo de ajuste é muito mais seguro do que mudar parâmetros globais, princ
 
 Se o objetivo for testar ou aplicar o comportamento apenas para a conexão atual, é possível alterar o modo da sessão:
 
-```
+```text
 ALTER SESSION SET optimizer_mode = ALL_ROWS;
 ```
 
@@ -113,7 +113,7 @@ Isso vale apenas enquanto a sessão estiver ativa e não afeta outros usuários.
 
 Quando existe uma decisão arquitetural clara, o modo padrão do banco pode ser alterado:
 
-```
+```text
 ALTER SYSTEM SET optimizer_mode = FIRST_ROWS SCOPE=SPFILE;
 ```
 
@@ -125,7 +125,7 @@ Em alguns cenários, apenas um usuário ou aplicação precisa de um comportamen
 
 Exemplo:
 
-```
+```text
 CREATE OR REPLACE TRIGGER trg_set_optimizer
 AFTER LOGON ON DATABASE
 BEGIN

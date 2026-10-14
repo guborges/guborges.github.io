@@ -27,19 +27,19 @@ São eles: editions, editioning views e crossedition triggers. Se você só alte
 
 Antes de qualquer coisa: habilitar editions para um schema é irreversível e não é uma operação online.
 
-```
+```text
 ALTER USER app ENABLE EDITIONS;
 ```
 
 Depois disso, esse usuário fica editions-enabled para sempre. Não existe `DISABLE EDITIONS`. Todo objeto editionable que ele já tem ou vier a ter passa a ser um objeto editioned. Se o schema tem objetos não editionable que dependem de objetos editionable, você precisa do `FORCE`, e isso deixa os objetos não editionable inválidos até você recompilar.
 
-```
+```text
 ALTER USER app ENABLE EDITIONS FORCE;
 ```
 
 Para conferir quem já está habilitado:
 
-```
+```text
 SELECT username, editions_enabled
 FROM   dba_users
 WHERE  username = 'APP';
@@ -51,7 +51,7 @@ A coluna `EDITIONS_ENABLED` vem como Y quando o schema está habilitado. Esse pa
 
 Edition é um objeto sem schema e sem dono. Todo banco nasce com uma edition chamada `ora$base`. Você cria novas editions a partir dela:
 
-```
+```text
 GRANT CREATE ANY EDITION, DROP ANY EDITION TO app;
 
 CREATE EDITION rel2 AS CHILD OF ora$base;
@@ -65,19 +65,19 @@ Quando você cria uma edition, ela herda na hora todos os objetos editioned da e
 
 Para outros usuários enxergarem a edition, você concede explicitamente:
 
-```
+```text
 GRANT USE ON EDITION rel2 TO app;
 ```
 
 A sessão escolhe em qual edition trabalha:
 
-```
+```text
 ALTER SESSION SET EDITION = rel2;
 ```
 
 E você confirma onde está a qualquer momento:
 
-```
+```text
 SELECT SYS_CONTEXT('userenv', 'current_edition_name') FROM dual;
 ```
 
@@ -85,7 +85,7 @@ Numa sessão recém-conectada que não setou nada, a resposta é a edition defau
 
 Vale saber quais tipos são editionable. Com `COMPATIBLE` 12 ou maior, são editionable: `SYNONYM`, `VIEW`, perfil de tradução SQL e todos os tipos PL/SQL (`FUNCTION`, `LIBRARY`, `PACKAGE` e `PACKAGE BODY`, `PROCEDURE`, `TRIGGER`, `TYPE` e `TYPE BODY`). Para ver na sua instância:
 
-```
+```text
 SELECT * FROM v$editionable_types;
 ```
 
@@ -95,7 +95,7 @@ SELECT * FROM v$editionable_types;
 
 Como a tabela é a mesma para todas as editions, você não pode simplesmente mudar a estrutura dela sem afetar quem está na versão antiga. A solução do EBR é colocar uma editioning view na frente da tabela. Ela projeta a tabela de um jeito diferente em cada edition, sem duplicar dado.
 
-```
+```text
 CREATE EDITIONING VIEW app.customers_v AS
 SELECT cust_id, name, status
 FROM   app.customers_t;
@@ -109,7 +109,7 @@ A editioning view pode ser read-only ou read-write. Se você não for usar cross
 
 Para listar editioning views existentes:
 
-```
+```text
 SELECT owner, view_name
 FROM   dba_editioning_views;
 ```
@@ -134,7 +134,7 @@ Juntando as peças, o fluxo de um upgrade online que muda estrutura fica assim. 
 
 Primeiro, cria e isola a edition nova:
 
-```
+```text
 CREATE EDITION rel2 AS CHILD OF ora$base;
 GRANT USE ON EDITION rel2 TO app;
 ALTER SESSION SET EDITION = rel2;
@@ -142,7 +142,7 @@ ALTER SESSION SET EDITION = rel2;
 
 Dentro da `rel2`, faz a mudança de estrutura na tabela base (que é compartilhada) e redefine a editioning view para o novo formato, além de subir o PL/SQL novo:
 
-```
+```text
 ALTER TABLE app.customers_t ADD (first_name VARCHAR2(60), last_name VARCHAR2(60));
 
 CREATE OR REPLACE EDITIONING VIEW app.customers_v AS
@@ -154,7 +154,7 @@ Cria os crossedition triggers para manter os dois formatos coerentes e aplica a 
 
 Quando estiver confiante, publica para todos trocando a edition default do banco:
 
-```
+```text
 ALTER DATABASE DEFAULT EDITION = rel2;
 ```
 
@@ -168,7 +168,7 @@ Tem uma armadilha de timing na hora de aposentar a edition antiga. Processos de 
 
 Você só pode dropar editions folha. Como a cadeia é linear, isso normalmente significa remover a ponta da cadeia, então o planejamento da hierarquia importa. Antes de dropar, faça a desmontagem dos triggers. Os forward crossedition triggers são dropados automaticamente quando a edition é dropada. Os reverse devem ser desabilitados primeiro, como parte do teardown, antes de remover a edition. Confira o que sobrou consultando as views com sufixo `_AE`, que mostram objetos de todas as editions, contra as views normais, que mostram só a edition corrente:
 
-```
+```text
 SELECT object_name, edition_name, status
 FROM   dba_objects_ae
 WHERE  owner = 'APP'

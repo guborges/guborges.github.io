@@ -22,7 +22,7 @@ Se você já testou o projetos antes, limpe tudo para evitar conflitos.
 
 Esse passo garante que o laboratório suba do zero exatamente como planejado.
 
-```
+```text
 cd /home/lab06/projeto06 2>/dev/null || true
 
 if [ -f docker-compose.yml ]; then
@@ -62,7 +62,7 @@ A aplicação sempre conecta nesse endpoint, independente de qual nó esteja lí
 
 Aqui você cria a imagem base que roda Postgres + Patroni com suporte a etcd.
 
-```
+```text
 cd /home/lab06/projeto06
 
 cat &lt;&lt; 'EOF' > Dockerfile
@@ -87,7 +87,7 @@ EOF
 
 Crie o diretório de configuração:
 
-```
+```text
 mkdir -p patroni
 ```
 
@@ -103,7 +103,7 @@ Este é o **nó que cria o cluster**.
 
 Somente ele possui o bloco bootstrap:.
 
-```
+```text
 cat << 'EOF' > patroni/patroni-node2.yml
 scope: pg-cluster
 name: node2
@@ -160,7 +160,7 @@ Esse nó **não cria nada**. Ele apenas replica do líder.
 
 Aqui está a correção mais crítica: o data_dir fica em um subdiretório /pgdata para evitar permissões ruins herdadas da imagem.
 
-```
+```text
 cat << 'EOF' > patroni/patroni-node1.yml
 scope: pg-cluster
 name: node1
@@ -203,10 +203,10 @@ Este arquivo cria:
 - painel web na porta **7000**
 - healthcheck usando HTTP do Patroni
 
-```
+```text
 mkdir -p haproxy
 ```
-```
+```text
 cat << 'EOF' > haproxy/haproxy.cfg
 global
     maxconn 100
@@ -242,7 +242,7 @@ O etcd precisa do parâmetro --enable-v2=true.
 
 Sem isso, o Patroni trava em “waiting on etcd”.
 
-```
+```text
 cat << 'EOF' > docker-compose.yml
 services:
 
@@ -312,7 +312,7 @@ EOF
 
 # Subindo o cluster
 
-```
+```text
 cd /home/lab06/projeto06
 
 docker compose build --no-cache
@@ -332,7 +332,7 @@ Se ambos os Patronis estiverem "Up", tudo subiu corretamente.
 
 # Validando quem é primário e standby
 
-```
+```text
 docker exec -it patroni-node2 psql -U postgres -c "SELECT inet_server_addr(), pg_is_in_recovery();"
 
 docker exec -it patroni-node1 psql -U postgres -c "SELECT inet_server_addr(), pg_is_in_recovery();"
@@ -349,7 +349,7 @@ Se o node1 der erro de “socket missing”, quase sempre é data_dir errado.
 
 No primário:
 
-```
+```text
 docker exec -it patroni-node2 psql -U postgres -c "
   SELECT pid, state, client_addr, sync_state
   FROM pg_stat_replication;
@@ -362,7 +362,7 @@ Se apareceu uma linha, a réplica está conectada.
 
 No primário:
 
-```
+```text
 docker exec -it patroni-node2 psql -U postgres -c "
   DROP TABLE IF EXISTS teste_ha;
   CREATE TABLE teste_ha (id int, valor text);
@@ -372,7 +372,7 @@ docker exec -it patroni-node2 psql -U postgres -c "
 
 No standby:
 
-```
+```text
 docker exec -it patroni-node1 psql -U postgres -c "SELECT * FROM teste_ha;"<br><br>
 ```
 
@@ -380,7 +380,7 @@ Se retornou 1 | ok, está perfeito.
 
 # Testando via HAProxy
 
-```
+```text
 docker exec -it patroni-node2 bash -c '
   PGPASSWORD=postgrespass psql -h haproxy -p 5000 -U postgres -c "
     SELECT inet_server_addr(), pg_is_in_recovery();
@@ -394,7 +394,7 @@ O HAProxy sempre manda para o líder atual.
 
 Derrube o líder:
 
-```
+```text
 docker stop patroni-node2
 ```
 
@@ -402,7 +402,7 @@ Após alguns segundos, o node1 assume.
 
 Confirme:
 
-```
+```text
 docker exec -it patroni-node1 psql -U postgres -c "
   SELECT inet_server_addr(), pg_is_in_recovery();
 "
@@ -410,7 +410,7 @@ docker exec -it patroni-node1 psql -U postgres -c "
 
 Via HAProxy:
 
-```
+```text
 docker exec -it patroni-node1 bash -c '
   PGPASSWORD=postgrespass psql -h haproxy -p 5000 -U postgres -c "
     SELECT inet_server_addr(), pg_is_in_recovery();

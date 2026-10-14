@@ -23,7 +23,7 @@ Tudo que mostro a seguir é exatamente o que usei no meu ambiente e o que funcio
 
 Sugestão de requirements.txt que usei:
 
-```
+```text
 oracledb
 sqlalchemy
 pandas
@@ -39,7 +39,7 @@ llama-index-embeddings-huggingface
 
 Preparando e iniciando ambiente virtual
 
-```
+```text
 PS D:\Estudos IA\llamaindex_bd> .\.venv\Scripts\activate
 (.venv) PS D:\Estudos IA\llamaindex_bd> pip install -r .\requirements.txt
 ```
@@ -50,7 +50,7 @@ Eu gerei tudo via SQL*Plus. Este script funcionou limpo e rápido.
 
 Arquivo setup_escola.sql:
 
-```
+```text
 SET DEFINE OFF
 SET SERVEROUTPUT ON
 WHENEVER SQLERROR EXIT SQL.SQLCODE
@@ -129,7 +129,7 @@ COMMIT;
 
 Executar:
 
-```
+```text
 sqlplus "sys/oracle@HOST:1521/orcl as sysdba" @setup_escola.sql
 ```
 
@@ -141,7 +141,7 @@ A seguir estão as células que eu usei. É só colar e executar na ordem.
 
 Cria o engine do SQLAlchemy em modo thin com oracledb, usando HOST, PORT e service name orcl. pool_pre_ping=True evita conexões mortas. test_connection() valida a conexão lendo o banner. set_current_schema() fixa a sessão no schema ESCOLA para que as consultas e reflexões enxerguem as tabelas certas. Edite USER, PWD, HOST e SERVICE se mudar de ambiente.
 
-```
+```text
 # instala se faltar
 !pip -q install oracledb sqlalchemy pandas python-dotenv
 
@@ -177,7 +177,7 @@ set_current_schema()
 
 Carrega GROQ_API_KEY do .env. Define o LLM da Groq e o modelo de embeddings da HuggingFace. temperature=0.2 para respostas objetivas. normalize=True melhora a busca semântica. Se a Groq trocar o nome do modelo, só ajuste a variável model.
 
-```
+```text
 !pip -q install "llama-index>=0.11.0" llama-index-llms-groq llama-index-embeddings-huggingface
 
 from dotenv import load_dotenv
@@ -202,7 +202,7 @@ print("LlamaIndex configurado")
 
 Cria SQLDatabase(engine, schema="ESCOLA") para ancorar o catálogo no schema correto. Lê ALL_TABLES e ALL_TAB_COLUMNS para listar tabelas e colunas. Monta SQLTableSchema com um texto de contexto por tabela; no caso de DISCIPLINAS adiciona a relação com PROFESSORES para ajudar o LLM a montar joins. Cria ObjectIndex sobre esses esquemas e expõe obj_retriever que retorna o esquema mais relevante por pergunta.
 
-```
+```text
 from sqlalchemy import text
 from llama_index.core import SQLDatabase, VectorStoreIndex
 from llama_index.core.objects import SQLTableNodeMapping, SQLTableSchema, ObjectIndex
@@ -241,7 +241,7 @@ print("Índice pronto:", table_names)
 
 Instancia SQLTableRetrieverQueryEngine com compatibilidade entre versões (parâmetro table_retriever ou retriever). Intercepta o SQL gerado, corrige para sintaxe Oracle 19c: remove ponto e vírgula final, troca ILIKE por LIKE, troca `!=` por `<>`, remove `AS` em alias de tabela, converte LIMIT e OFFSET para FETCH FIRST e qualifica tabelas com ESCOLA. Se a condição for cidade = '...', tenta automaticamente versões case-insensitive e LIKE. Executa a query no Oracle e formata a saída em texto pronto; quando houver nome, rua e bairro imprime no padrão do exemplo.
 
-```
+```text
 # import compatível com versões
 try:
     from llama_index.core.indices.struct_store.sql_query import SQLTableRetrieverQueryEngine
@@ -367,7 +367,7 @@ print("Query engine pronto")
 
 Faz perguntas em português, o engine gera o SQL, executa no Oracle e imprime a resposta já formatada. Use para validar o fluxo e checar se a formatação final está no padrão que você quer.
 
-```
+```text
 response = query_engine.query("Quais professores residem na cidade de São Paulo?")
 print(response)
 ```
@@ -376,7 +376,7 @@ print(response)
 
 A pergunta sai natural e a resposta volta já formatada. Exemplo de saída para São Paulo:
 
-```
+```text
 Os professores que residem na cidade de São Paulo são:
 - Professor 7, que mora na Rua 7, no Bairro 7.
 - Professor 8, que mora na Rua 8, no Bairro 8.
@@ -387,7 +387,7 @@ Os professores que residem na cidade de São Paulo são:
 
 Outro exemplo de pergunta, aqui eu faço o questionamento e o agente me retorna conforme imagem:
 
-```
+```text
 response = query_engine.query("Quais professores não residem na cidade de Belo Horizonte?")
 print(response)
 ```

@@ -25,13 +25,13 @@ A Oracle entrou neste espaço dizendo o óbvio: o Oracle AI Database já tem vec
 
 Instalação documentada:
 
-```
+```text
 pip install "oracleagentmemory==26.4.0"
 ```
 
 Inicialização do objeto principal:
 
-```
+```text
 from oracleagentmemory.core.oracleagentmemory import OracleAgentMemory
 from oracleagentmemory.apis.searchscope import SearchScope
 from oracleagentmemory.core.embedders.embedder import Embedder
@@ -51,7 +51,7 @@ Cenário: um agente que responde perguntas operacionais sobre o ambiente. Não s
 
 A memória aqui guarda padrões observados, decisões tomadas em incidentes anteriores, preferências do time. Quando o DBA pergunta "qual foi a última vez que TBS_APP cresceu rápido?", o agente busca no histórico em vez de partir do zero.
 
-```
+```text
 # DBA registra contexto durante e depois do incidente
 thread = memory.create_thread(user_id="dba_gustavo")
 
@@ -84,7 +84,7 @@ thread.add_memory(
 
 Em outra sessão, semanas depois, o DBA pergunta sobre crescimento da mesma tablespace. O agente busca pelo escopo do usuário e devolve as memórias relevantes:
 
-```
+```text
 results = memory.search(
     query="crescimento tablespace TBS_APP",
     scope=SearchScope(user_id="dba_gustavo")
@@ -104,7 +104,7 @@ Cenário diferente. Agente focado em performance, com memória de planos de exec
 
 Quando aparece uma query nova com perfil parecido (mesmas tabelas, padrão de join, volume estimado), o agente já sabe que tem histórico relevante.
 
-```
+```text
 thread = memory.create_thread(user_id="tuning_team")
 
 # Registro de uma query problematica vista em producao
@@ -138,7 +138,7 @@ thread.add_memory(
 
 Semanas depois, em outro incidente:
 
-```
+```text
 results = memory.search(
     query="full scan ORDER_ITEMS plano de execucao",
     scope=SearchScope(user_id="tuning_team")
@@ -157,7 +157,7 @@ Aqui está o que a doc oficial não enfatiza e o que o post de developer pula. T
 
 Crie um schema separado para a memória dos agentes. Não misture com schema de aplicação. Quota controlada, tablespace dedicada, sem QUOTA UNLIMITED ON USERS. Exemplo conservador:
 
-```
+```text
 CREATE TABLESPACE TBS_AGENT_MEMORY
   DATAFILE '+DATA' SIZE 10G AUTOEXTEND ON NEXT 1G MAXSIZE 100G
   EXTENT MANAGEMENT LOCAL AUTOALLOCATE
@@ -182,7 +182,7 @@ Memória de agente acumula se ninguém configurar política de retenção. Cada 
 
 Monitore desde o dia um:
 
-```
+```text
 SELECT segment_name, segment_type,
        ROUND(bytes/1024/1024/1024, 2) AS gb
 FROM   dba_segments
@@ -196,7 +196,7 @@ E acompanhe a curva de crescimento por semana, não só o tamanho atual.
 
 Se o mesmo schema atende múltiplos clientes, aplicações ou tenants, VPD é a opção a considerar. O exemplo abaixo aplica DBMS_RLS no padrão genérico de Oracle, não é configuração específica do SDK Agent Memory:
 
-```
+```text
 BEGIN
   DBMS_RLS.ADD_POLICY(
     object_schema   => 'AGENT_MEMORY_OWNER',
@@ -299,14 +299,14 @@ Em lab Oracle AI Database 26ai (23.26.1.0.0) com schema `agent_memory_owner`, o 
 
 Confirme que o SDK conectou e criou estruturas:
 
-```
+```text
 SELECT table_name FROM dba_tables WHERE owner = 'AGENT_MEMORY_OWNER';
 SELECT index_name, index_type FROM dba_indexes WHERE owner = 'AGENT_MEMORY_OWNER';
 ```
 
 Confirme que o vetor está chegando:
 
-```
+```text
 SELECT column_name, data_type
 FROM   dba_tab_columns
 WHERE  owner = 'AGENT_MEMORY_OWNER'
