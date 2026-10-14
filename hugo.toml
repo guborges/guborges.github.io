@@ -37,29 +37,12 @@ removePathAccents = true
 Senior Oracle DBA (Oracle ACE Associate, OCP) — Exadata, RAC, Data Guard, RMAN e performance tuning; também PostgreSQL e MySQL. Estudos, labs e soluções reais do dia a dia de banco de dados.
 
 <style>
-.topic-lead{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;opacity:.55;margin:1.4rem 0 .5rem;font-weight:700}
-.topic-nav{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:.4rem}
-.topic-nav a{padding:.34rem .8rem;border-radius:7px;background:var(--code-bg);color:var(--primary)!important;font-size:.85rem;font-weight:500;text-decoration:none;border:1px solid var(--border);transition:background .2s,border-color .2s}
-.topic-nav a:hover{background:var(--tertiary);border-color:var(--secondary)}
-.topic-nav a.all{background:var(--primary);color:var(--theme)!important;border-color:var(--primary)}
+.topics{margin:1.6rem 0 .2rem;font-size:.95rem;color:var(--secondary)}
+.topics a{color:var(--secondary);text-decoration:none;border-bottom:1px solid transparent;transition:color .15s ease,border-color .15s ease}
+.topics a:hover{color:var(--primary);border-bottom-color:var(--primary)}
+.topics .sep{opacity:.3;margin:0 .6rem}
 </style>
-<div class="topic-lead">Navegue por tópico</div>
-<div class="topic-nav">
-<a href="/categories/oracle-dba/">Oracle DBA</a>
-<a href="/categories/data-guard/">Data Guard</a>
-<a href="/categories/performance--tuning/">Performance Tuning</a>
-<a href="/categories/backup--recovery/">Backup &amp; Recovery</a>
-<a href="/categories/asm--storage/">ASM &amp; Storage</a>
-<a href="/categories/oracle-26ai/">Oracle 26ai</a>
-<a href="/categories/postgresql/">PostgreSQL</a>
-<a href="/categories/mysql/">MySQL</a>
-<a href="/categories/replicacao/">Replicação</a>
-<a href="/categories/scripts--automacao/">Scripts &amp; Automação</a>
-<a href="/categories/cloud/">Cloud</a>
-<a href="/categories/seguranca/">Segurança</a>
-<a href="/categories/ia/">IA</a>
-<a class="all" href="/posts/">Todos os posts →</a>
-</div>
+<nav class="topics"><a href="/categories/oracle-dba/">Oracle DBA</a><span class="sep">·</span><a href="/categories/data-guard/">Data Guard</a><span class="sep">·</span><a href="/categories/performance--tuning/">Performance</a><span class="sep">·</span><a href="/categories/backup--recovery/">Backup &amp; Recovery</a><span class="sep">·</span><a href="/categories/postgresql/">PostgreSQL</a><span class="sep">·</span><a href="/categories/oracle-26ai/">Oracle 26ai</a><span class="sep">·</span><a href="/categories/cloud/">Cloud</a><span class="sep">·</span><a href="/categories/">Todos →</a></nav>
 """
 
   [[params.socialIcons]]
