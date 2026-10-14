@@ -214,6 +214,8 @@ body.list .first-entry + .post-entry .entry-header h2::before {
 .post-content .highlight code,
 .post-content pre code {
     font-family: ui-monospace, "SFMono-Regular", "JetBrains Mono", "Fira Code", Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: 0.9rem;
+    line-height: 1.55;
 }
 /* fallback: <pre> sem wrapper .highlight */
 .post-content pre:not(.chroma) {
