@@ -1,20 +1,26 @@
-/* ===== Home: hero (último post) + grid de cards ===== */
+/* ===== Home: hero (último post) + grid de 4 cards ===== */
 
-/* só na home/listagem: grid de 2 colunas */
-.main {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 26px;
+/* alarga só a home (header + conteúdo) — artigos continuam estreitos p/ leitura */
+body:has(.home-info) .main,
+body:has(.home-info) header .nav {
+    max-width: 1240px;
 }
 
-/* bio + navegação de tópicos e a paginação ocupam a linha toda */
-.first-entry,
-.page-footer {
+/* grid de 4 colunas */
+body:has(.home-info) .main {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 22px;
+}
+
+/* bio+tópicos e paginação ocupam a linha toda */
+body:has(.home-info) .first-entry,
+body:has(.home-info) .page-footer {
     grid-column: 1 / -1;
 }
 
 /* ---- card padrão ---- */
-.post-entry {
+body:has(.home-info) .post-entry {
     margin: 0 !important;
     padding: 0;
     background: var(--entry);
@@ -27,13 +33,13 @@
     transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
 }
 
-.post-entry:hover {
+body:has(.home-info) .post-entry:hover {
     transform: translateY(-4px);
-    box-shadow: 0 10px 28px rgba(0, 0, 0, .14);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, .16);
     border-color: var(--secondary);
 }
 
-.post-entry .entry-cover {
+body:has(.home-info) .post-entry .entry-cover {
     margin: 0;
     width: 100%;
     aspect-ratio: 16 / 9;
@@ -41,99 +47,130 @@
     border-radius: 0;
 }
 
-.post-entry .entry-cover img {
+body:has(.home-info) .post-entry .entry-cover img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
 }
 
-.post-entry .entry-header {
-    margin: 16px 20px 0;
+body:has(.home-info) .post-entry .entry-header {
+    margin: 14px 16px 0;
 }
 
-.post-entry .entry-header h2 {
-    font-size: 1.15rem;
-    line-height: 1.35;
-}
-
-.post-entry .entry-content {
-    margin: 10px 20px 0;
-    flex: 1;
+body:has(.home-info) .post-entry .entry-header h2 {
+    font-size: 1rem;
+    line-height: 1.32;
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
 
-.post-entry .entry-footer {
-    margin: 14px 20px 18px;
+body:has(.home-info) .post-entry .entry-content {
+    margin: 8px 16px 0;
+    flex: 1;
+    font-size: .86rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
-/* ---- hero: o post mais recente (logo após a bio na home) ---- */
-.first-entry + .post-entry {
+body:has(.home-info) .post-entry .entry-footer {
+    margin: 12px 16px 16px;
+    font-size: .75rem;
+}
+
+/* ---- hero: post mais recente (logo após a bio) ---- */
+body:has(.home-info) .first-entry + .post-entry {
     grid-column: 1 / -1;
-    flex-direction: row;
-    align-items: stretch;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    grid-template-rows: auto auto auto;
+    column-gap: 32px;
+    align-content: center;
 }
 
-.first-entry + .post-entry .entry-cover {
-    width: 52%;
-    flex-shrink: 0;
+body:has(.home-info) .first-entry + .post-entry .entry-cover {
+    grid-column: 1;
+    grid-row: 1 / 4;
+    width: 100%;
+    height: 100%;
+    min-height: 340px;
     aspect-ratio: auto;
-    min-height: 300px;
 }
 
-.first-entry + .post-entry > a.entry-link ~ .entry-header,
-.first-entry + .post-entry .entry-header {
-    margin-top: 30px;
+body:has(.home-info) .first-entry + .post-entry .entry-header {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: end;
+    margin: 0 32px 0 0;
 }
 
-.first-entry + .post-entry .entry-header h2 {
-    font-size: 1.9rem;
-    line-height: 1.2;
-}
-
-.first-entry + .post-entry .entry-content {
+body:has(.home-info) .first-entry + .post-entry .entry-header h2 {
+    font-size: 1.85rem;
+    line-height: 1.18;
     -webkit-line-clamp: 4;
-    font-size: 1rem;
 }
 
-/* selinho "Mais recente" no hero */
-.first-entry + .post-entry .entry-header h2::before {
+body:has(.home-info) .first-entry + .post-entry .entry-content {
+    grid-column: 2;
+    grid-row: 2;
+    margin: 16px 32px 0 0;
+    font-size: 1rem;
+    -webkit-line-clamp: 4;
+}
+
+body:has(.home-info) .first-entry + .post-entry .entry-footer {
+    grid-column: 2;
+    grid-row: 3;
+    align-self: start;
+    margin: 18px 32px 0 0;
+}
+
+/* selo "Mais recente" */
+body:has(.home-info) .first-entry + .post-entry .entry-header h2::before {
     content: "★ Mais recente";
     display: block;
-    width: fit-content;
+    width: max-content;
+    white-space: nowrap;
     font-size: .68rem;
     font-weight: 700;
     letter-spacing: .06em;
     text-transform: uppercase;
     color: var(--theme);
     background: var(--primary);
-    padding: .25rem .6rem;
+    padding: .28rem .6rem;
     border-radius: 6px;
     margin-bottom: .7rem;
-    vertical-align: middle;
 }
 
 /* ---- responsivo ---- */
-@media (max-width: 768px) {
-    .main {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
+@media (max-width: 1100px) {
+    body:has(.home-info) .main { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
 
-    .first-entry + .post-entry {
+@media (max-width: 860px) {
+    body:has(.home-info) .main { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    body:has(.home-info) .first-entry + .post-entry {
+        display: flex;
         flex-direction: column;
     }
-
-    .first-entry + .post-entry .entry-cover {
-        width: 100%;
+    body:has(.home-info) .first-entry + .post-entry .entry-cover {
         min-height: 0;
         aspect-ratio: 16 / 9;
     }
-
-    .first-entry + .post-entry .entry-header h2 {
-        font-size: 1.4rem;
+    body:has(.home-info) .first-entry + .post-entry .entry-header,
+    body:has(.home-info) .first-entry + .post-entry .entry-content,
+    body:has(.home-info) .first-entry + .post-entry .entry-footer {
+        margin-left: 18px;
+        margin-right: 18px;
     }
+    body:has(.home-info) .first-entry + .post-entry .entry-header { margin-top: 16px; }
+    body:has(.home-info) .first-entry + .post-entry .entry-header h2 { font-size: 1.4rem; }
+}
+
+@media (max-width: 540px) {
+    body:has(.home-info) .main { grid-template-columns: 1fr; }
 }
