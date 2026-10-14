@@ -1,6 +1,6 @@
 baseURL = "https://guborges.github.io/"
-languageCode = "pt-br"
-defaultContentLanguage = "pt"
+languageCode = "en-us"
+defaultContentLanguage = "en"
 title = "DBA Gustavo Borges"
 theme = "PaperMod"
 enableRobotsTXT = true
@@ -17,7 +17,7 @@ removePathAccents = true
 
 [params]
   env = "production"
-  description = "Artigos técnicos sobre Oracle, PostgreSQL, MySQL, performance tuning, alta disponibilidade e infraestrutura de banco de dados."
+  description = "Technical articles on Oracle, PostgreSQL, MySQL, performance tuning, high availability and database infrastructure."
   author = "Gustavo Borges"
   defaultTheme = "dark"
   ShowReadingTime = true
@@ -34,7 +34,7 @@ removePathAccents = true
   [params.homeInfoParams]
     Title = "DBA Gustavo Borges"
     Content = """
-Oracle ACE Associate · OCP · AWS Certified. Especialista em bancos de dados de missão crítica — Exadata, RAC, Data Guard, RMAN, ASM e performance tuning — com atuação também em PostgreSQL e MySQL. Aqui publico artigos técnicos, laboratórios e soluções aplicadas de administração de banco de dados.
+Oracle ACE Associate · OCP · AWS Certified. Specialist in mission-critical databases, from Exadata, RAC, Data Guard, RMAN and ASM to performance tuning, with hands-on experience across PostgreSQL and MySQL. Technical articles, hands-on labs and real-world database administration solutions.
 
 <style>
 .topics{margin:1.6rem 0 .2rem;font-size:.95rem;color:var(--secondary)}
@@ -42,7 +42,7 @@ Oracle ACE Associate · OCP · AWS Certified. Especialista em bancos de dados de
 .topics a:hover{color:var(--primary);border-bottom-color:var(--primary)}
 .topics .sep{opacity:.3;margin:0 .6rem}
 </style>
-<nav class="topics"><a href="/categories/oracle-dba/">Oracle DBA</a><span class="sep">·</span><a href="/categories/data-guard/">Data Guard</a><span class="sep">·</span><a href="/categories/performance--tuning/">Performance</a><span class="sep">·</span><a href="/categories/backup--recovery/">Backup &amp; Recovery</a><span class="sep">·</span><a href="/categories/postgresql/">PostgreSQL</a><span class="sep">·</span><a href="/categories/oracle-26ai/">Oracle 26ai</a><span class="sep">·</span><a href="/categories/cloud/">Cloud</a><span class="sep">·</span><a href="/categories/">Todos →</a></nav>
+<nav class="topics"><a href="/categories/oracle-dba/">Oracle DBA</a><span class="sep">·</span><a href="/categories/data-guard/">Data Guard</a><span class="sep">·</span><a href="/categories/performance--tuning/">Performance</a><span class="sep">·</span><a href="/categories/backup--recovery/">Backup &amp; Recovery</a><span class="sep">·</span><a href="/categories/postgresql/">PostgreSQL</a><span class="sep">·</span><a href="/categories/oracle-26ai/">Oracle 26ai</a><span class="sep">·</span><a href="/categories/cloud/">Cloud</a><span class="sep">·</span><a href="/categories/">All →</a></nav>
 """
 
   [[params.socialIcons]]
@@ -77,12 +77,12 @@ Oracle ACE Associate · OCP · AWS Certified. Especialista em bancos de dados de
   weight = 10
 [[menu.main]]
   identifier = "archives"
-  name = "Arquivo"
+  name = "Archive"
   url = "/archives/"
   weight = 20
 [[menu.main]]
   identifier = "categories"
-  name = "Categorias"
+  name = "Categories"
   url = "/categories/"
   weight = 30
 [[menu.main]]
@@ -92,7 +92,7 @@ Oracle ACE Associate · OCP · AWS Certified. Especialista em bancos de dados de
   weight = 40
 [[menu.main]]
   identifier = "search"
-  name = "Buscar"
+  name = "Search"
   url = "/search/"
   weight = 50
 
