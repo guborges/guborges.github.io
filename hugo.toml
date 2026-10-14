@@ -32,9 +32,9 @@ removePathAccents = true
   UseHugoToc = true
 
   [params.homeInfoParams]
-    Title = "DBA Gustavo Borges 👋"
+    Title = "DBA Gustavo Borges"
     Content = """
-Senior Oracle DBA (Oracle ACE Associate, OCP) — Exadata, RAC, Data Guard, RMAN e performance tuning; também PostgreSQL e MySQL. Estudos, labs e soluções reais do dia a dia de banco de dados.
+Oracle ACE Associate · OCP · AWS Certified. Especialista em bancos de dados de missão crítica — Exadata, RAC, Data Guard, RMAN, ASM e performance tuning — com atuação também em PostgreSQL e MySQL. Aqui publico artigos técnicos, laboratórios e soluções aplicadas de administração de banco de dados.
 
 <style>
 .topics{margin:1.6rem 0 .2rem;font-size:.95rem;color:var(--secondary)}
