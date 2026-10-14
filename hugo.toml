@@ -1,7 +1,7 @@
 baseURL = "https://guborges.github.io/"
 languageCode = "en-us"
 defaultContentLanguage = "en"
-title = "DBA Gustavo Borges"
+title = "Gustavo Borges"
 theme = "PaperMod"
 enableRobotsTXT = true
 enableEmoji = true
@@ -32,7 +32,7 @@ removePathAccents = true
   UseHugoToc = true
 
   [params.homeInfoParams]
-    Title = "DBA Gustavo Borges"
+    Title = "Gustavo Borges"
     Content = """
 Oracle ACE Associate · OCP · AWS Certified. Specialist in mission-critical databases, from Exadata, RAC, Data Guard, RMAN and ASM to performance tuning, with hands-on experience across PostgreSQL and MySQL. Technical articles, hands-on labs and real-world database administration solutions.
 
