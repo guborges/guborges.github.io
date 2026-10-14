@@ -196,3 +196,32 @@ body.list .first-entry + .post-entry .entry-header h2::before {
         max-width: 100%;
     }
 }
+
+/* ===== Blocos de código (padding, cantos, fonte, scroll) ===== */
+.post-content .highlight {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin: 1.3rem 0;
+    overflow: hidden;
+}
+.post-content .highlight pre.chroma {
+    margin: 0;
+    padding: 0.95rem 1.15rem;
+    overflow-x: auto;
+    font-size: 0.86rem;
+    line-height: 1.55;
+}
+.post-content .highlight code,
+.post-content pre code {
+    font-family: ui-monospace, "SFMono-Regular", "JetBrains Mono", "Fira Code", Menlo, Consolas, "Liberation Mono", monospace;
+}
+/* fallback: <pre> sem wrapper .highlight */
+.post-content pre:not(.chroma) {
+    background: #1e2127;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.95rem 1.15rem;
+    overflow-x: auto;
+    font-size: 0.86rem;
+    line-height: 1.55;
+}
