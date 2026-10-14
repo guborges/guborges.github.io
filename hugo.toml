@@ -65,10 +65,18 @@ Oracle ACE Associate · OCP · AWS Certified. Specialist in mission-critical dat
     minMatchCharLength = 2
     keys = ["title", "permalink", "summary", "content"]
 
+[params.label]
+  text = "Gustavo Borges"
+  icon = "/gb.svg"
+  iconHeight = 28
+
 [params.assets]
   disableHLJS = true
   favicon = "/favicon.png"
-  apple_touch_icon = "/favicon.png"
+  favicon16x16 = "/favicon-16.png"
+  favicon32x32 = "/favicon-32.png"
+  apple_touch_icon = "/apple-touch-icon.png"
+  safari_pinned_tab = "/favicon.svg"
 
 [[menu.main]]
   identifier = "posts"
