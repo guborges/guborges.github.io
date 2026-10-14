@@ -1,3 +1,8 @@
+/* largura de leitura do post (padrão do tema é 720px — alargado) */
+:root {
+    --main-width: 840px;
+}
+
 /* ===== Home: hero (último post) + grid de 4 cards ===== */
 
 /* alarga só a home (header + conteúdo) — artigos continuam estreitos p/ leitura */
