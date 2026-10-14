@@ -1,13 +1,13 @@
 /* ===== Home: hero (último post) + grid de 4 cards ===== */
 
 /* alarga só a home (header + conteúdo) — artigos continuam estreitos p/ leitura */
-body:has(.home-info) .main,
-body:has(.home-info) header .nav {
+body.list .main:has(.post-entry),
+body.list:has(.post-entry) header .nav {
     max-width: 1240px;
 }
 
 /* 4 cards por linha; flex p/ centralizar a última linha quando sobra card */
-body:has(.home-info) .main {
+body.list .main:has(.post-entry) {
     display: flex;
     flex-wrap: wrap;
     gap: 22px;
@@ -15,21 +15,22 @@ body:has(.home-info) .main {
     align-items: stretch;
 }
 
-/* bio+tópicos, hero e paginação ocupam a linha toda */
-body:has(.home-info) .first-entry,
-body:has(.home-info) .page-footer,
-body:has(.home-info) .first-entry + .post-entry {
+/* bio+tópicos, cabeçalho da listagem, hero e paginação ocupam a linha toda */
+body.list .first-entry,
+body.list .page-header,
+body.list .page-footer,
+body.list .first-entry + .post-entry {
     flex: 0 0 100%;
     width: 100%;
 }
 
 /* card = 1/4 da linha (largura fixa, nunca encolhe; folga p/ evitar arredondamento) */
-body:has(.home-info) .post-entry {
+body.list .post-entry {
     flex: 0 0 calc(25% - 17px);
 }
 
 /* ---- card padrão ---- */
-body:has(.home-info) .post-entry {
+body.list .post-entry {
     margin: 0 !important;
     padding: 0;
     background: var(--entry);
@@ -42,13 +43,13 @@ body:has(.home-info) .post-entry {
     transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
 }
 
-body:has(.home-info) .post-entry:hover {
+body.list .post-entry:hover {
     transform: translateY(-4px);
     box-shadow: 0 10px 28px rgba(0, 0, 0, .16);
     border-color: var(--secondary);
 }
 
-body:has(.home-info) .post-entry .entry-cover {
+body.list .post-entry .entry-cover {
     margin: 0;
     width: 100%;
     aspect-ratio: 16 / 9;
@@ -56,18 +57,18 @@ body:has(.home-info) .post-entry .entry-cover {
     border-radius: 0;
 }
 
-body:has(.home-info) .post-entry .entry-cover img {
+body.list .post-entry .entry-cover img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
 }
 
-body:has(.home-info) .post-entry .entry-header {
+body.list .post-entry .entry-header {
     margin: 14px 16px 0;
 }
 
-body:has(.home-info) .post-entry .entry-header h2 {
+body.list .post-entry .entry-header h2 {
     font-size: 1rem;
     line-height: 1.32;
     display: -webkit-box;
@@ -76,7 +77,7 @@ body:has(.home-info) .post-entry .entry-header h2 {
     overflow: hidden;
 }
 
-body:has(.home-info) .post-entry .entry-content {
+body.list .post-entry .entry-content {
     margin: 8px 16px 0;
     flex: 1;
     font-size: .86rem;
@@ -86,13 +87,13 @@ body:has(.home-info) .post-entry .entry-content {
     overflow: hidden;
 }
 
-body:has(.home-info) .post-entry .entry-footer {
+body.list .post-entry .entry-footer {
     margin: 12px 16px 16px;
     font-size: .75rem;
 }
 
 /* ---- hero: post mais recente (logo após a bio) ---- */
-body:has(.home-info) .first-entry + .post-entry {
+body.list .first-entry + .post-entry {
     grid-column: 1 / -1;
     display: grid;
     grid-template-columns: 1.2fr 1fr;
@@ -101,7 +102,7 @@ body:has(.home-info) .first-entry + .post-entry {
     align-content: center;
 }
 
-body:has(.home-info) .first-entry + .post-entry .entry-cover {
+body.list .first-entry + .post-entry .entry-cover {
     grid-column: 1;
     grid-row: 1 / 4;
     width: 100%;
@@ -110,20 +111,20 @@ body:has(.home-info) .first-entry + .post-entry .entry-cover {
     aspect-ratio: auto;
 }
 
-body:has(.home-info) .first-entry + .post-entry .entry-header {
+body.list .first-entry + .post-entry .entry-header {
     grid-column: 2;
     grid-row: 1;
     align-self: end;
     margin: 0 32px 0 0;
 }
 
-body:has(.home-info) .first-entry + .post-entry .entry-header h2 {
+body.list .first-entry + .post-entry .entry-header h2 {
     font-size: 1.85rem;
     line-height: 1.18;
     -webkit-line-clamp: 4;
 }
 
-body:has(.home-info) .first-entry + .post-entry .entry-content {
+body.list .first-entry + .post-entry .entry-content {
     grid-column: 2;
     grid-row: 2;
     margin: 16px 32px 0 0;
@@ -131,7 +132,7 @@ body:has(.home-info) .first-entry + .post-entry .entry-content {
     -webkit-line-clamp: 4;
 }
 
-body:has(.home-info) .first-entry + .post-entry .entry-footer {
+body.list .first-entry + .post-entry .entry-footer {
     grid-column: 2;
     grid-row: 3;
     align-self: start;
@@ -139,7 +140,7 @@ body:has(.home-info) .first-entry + .post-entry .entry-footer {
 }
 
 /* selo "Mais recente" */
-body:has(.home-info) .first-entry + .post-entry .entry-header h2::before {
+body.list .first-entry + .post-entry .entry-header h2::before {
     content: "★ Mais recente";
     display: block;
     width: max-content;
@@ -157,35 +158,35 @@ body:has(.home-info) .first-entry + .post-entry .entry-header h2::before {
 
 /* ---- responsivo ---- */
 @media (max-width: 1100px) {
-    body:has(.home-info) .post-entry {
+    body.list .post-entry {
         flex-basis: calc(33.333% - 15px);
     }
 }
 
 @media (max-width: 860px) {
-    body:has(.home-info) .post-entry {
+    body.list .post-entry {
         flex-basis: calc(50% - 11px);
     }
-    body:has(.home-info) .first-entry + .post-entry {
+    body.list .first-entry + .post-entry {
         display: flex;
         flex-direction: column;
     }
-    body:has(.home-info) .first-entry + .post-entry .entry-cover {
+    body.list .first-entry + .post-entry .entry-cover {
         min-height: 0;
         aspect-ratio: 16 / 9;
     }
-    body:has(.home-info) .first-entry + .post-entry .entry-header,
-    body:has(.home-info) .first-entry + .post-entry .entry-content,
-    body:has(.home-info) .first-entry + .post-entry .entry-footer {
+    body.list .first-entry + .post-entry .entry-header,
+    body.list .first-entry + .post-entry .entry-content,
+    body.list .first-entry + .post-entry .entry-footer {
         margin-left: 18px;
         margin-right: 18px;
     }
-    body:has(.home-info) .first-entry + .post-entry .entry-header { margin-top: 16px; }
-    body:has(.home-info) .first-entry + .post-entry .entry-header h2 { font-size: 1.4rem; }
+    body.list .first-entry + .post-entry .entry-header { margin-top: 16px; }
+    body.list .first-entry + .post-entry .entry-header h2 { font-size: 1.4rem; }
 }
 
 @media (max-width: 540px) {
-    body:has(.home-info) .post-entry {
+    body.list .post-entry {
         flex-basis: 100%;
         max-width: 100%;
     }
