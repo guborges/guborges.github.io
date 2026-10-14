@@ -6,17 +6,27 @@ body:has(.home-info) header .nav {
     max-width: 1240px;
 }
 
-/* grid de 4 colunas */
+/* 4 cards por linha; flex p/ centralizar a última linha quando sobra card */
 body:has(.home-info) .main {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: 22px;
+    justify-content: center;
+    align-items: stretch;
 }
 
-/* bio+tópicos e paginação ocupam a linha toda */
+/* bio+tópicos, hero e paginação ocupam a linha toda */
 body:has(.home-info) .first-entry,
-body:has(.home-info) .page-footer {
-    grid-column: 1 / -1;
+body:has(.home-info) .page-footer,
+body:has(.home-info) .first-entry + .post-entry {
+    flex: 0 0 100%;
+    width: 100%;
+}
+
+/* card = 1/4 da linha (desconta os 3 gaps) */
+body:has(.home-info) .post-entry {
+    flex: 0 1 calc((100% - 3 * 22px) / 4);
+    max-width: calc((100% - 3 * 22px) / 4);
 }
 
 /* ---- card padrão ---- */
@@ -148,11 +158,17 @@ body:has(.home-info) .first-entry + .post-entry .entry-header h2::before {
 
 /* ---- responsivo ---- */
 @media (max-width: 1100px) {
-    body:has(.home-info) .main { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    body:has(.home-info) .post-entry {
+        flex-basis: calc((100% - 2 * 22px) / 3);
+        max-width: calc((100% - 2 * 22px) / 3);
+    }
 }
 
 @media (max-width: 860px) {
-    body:has(.home-info) .main { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    body:has(.home-info) .post-entry {
+        flex-basis: calc((100% - 22px) / 2);
+        max-width: calc((100% - 22px) / 2);
+    }
     body:has(.home-info) .first-entry + .post-entry {
         display: flex;
         flex-direction: column;
@@ -172,5 +188,8 @@ body:has(.home-info) .first-entry + .post-entry .entry-header h2::before {
 }
 
 @media (max-width: 540px) {
-    body:has(.home-info) .main { grid-template-columns: 1fr; }
+    body:has(.home-info) .post-entry {
+        flex-basis: 100%;
+        max-width: 100%;
+    }
 }
