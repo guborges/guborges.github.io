@@ -1,6 +1,6 @@
 ---
 title: "Bigfile tablespace no teto de 32 TB: o que fazer quando não dá mais para crescer"
-date: 2026-10-19T07:10:00-03:00
+date: 2026-10-19T07:00:00-03:00
 draft: false
 categories: ["Oracle DBA"]
 tags: ["Oracle", "Bigfile Tablespace", "Storage", "Partitioning", "DBA"]
