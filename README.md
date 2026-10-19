@@ -2,22 +2,9 @@
 
 Source of [guborges.github.io](https://guborges.github.io): technical articles on Oracle, PostgreSQL and MySQL, written from real production work.
 
-```sql
-SQL> SELECT DISTINCT topic, depth
-  2  FROM   blog.posts
-  3  WHERE  author = 'Gustavo Borges'
-  4  ORDER  BY 1;
-
-TOPIC                              DEPTH
----------------------------------- ------------
-Exadata, RAC, ASM                  production
-Data Guard, RMAN                   production
-Performance (AWR, ASH, ADDM)       deep dive
-PostgreSQL, MySQL                  hands-on
-Oracle 26ai, AI + database         lab
-
-5 rows selected.
-```
+<p align="center">
+  <img src=".github/assets/sqlplus.svg" alt="SQL*Plus session listing the blog topics" width="600">
+</p>
 
 ## About
 
