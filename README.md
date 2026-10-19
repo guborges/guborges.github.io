@@ -3,7 +3,7 @@
 Source of [guborges.github.io](https://guborges.github.io): technical articles on Oracle, PostgreSQL and MySQL, written from real production work.
 
 <p align="center">
-  <img src=".github/assets/sqlplus.svg" alt="SQL*Plus session listing the blog topics" width="600">
+  <img src=".github/assets/sqlplus.svg" alt="DROP DATABASE; Database dropped. Call the DBA!" width="600">
 </p>
 
 ## About
